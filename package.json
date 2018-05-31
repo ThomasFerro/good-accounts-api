@@ -1,0 +1,14 @@
+{
+  "name": "good-accounts-api",
+  "version": "1.0.0",
+  "description": "Treasury management made easy",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Thomas Ferro",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^2.9.1"
+  }
+}
