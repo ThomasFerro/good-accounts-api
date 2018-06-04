@@ -1,10 +1,10 @@
-import { IAccountService } from '../api/IAccountService';
-import { IAccountRepository } from '../spi/IAccountRepository';
+import { IAccountService } from '../../api/AccountService/IAccountService';
+import { IAccountRepository } from '../../spi/AccountRepository/IAccountRepository';
 
-import { User } from '../../user/entities/User';
-import { IUserRepository } from '../../user/spi/IUserRepository';
+import { User } from '../../../user/entities/User/User';
+import { IUserRepository } from '../../../user/spi/UserRepository/IUserRepository';
 
-class AccountService implements IAccountService {
+export class AccountService implements IAccountService {
     private accountRepository: IAccountRepository;
     private userRepository: IUserRepository;
     
