@@ -1,7 +1,7 @@
 import { IAccountService } from '../../api/AccountService/IAccountService';
 import { IAccountRepository } from '../../spi/AccountRepository/IAccountRepository';
 
-import { User } from '../../../user/entities/User/User';
+import { User } from '../../../user/core/entities/User/User';
 import { IUserRepository } from '../../../user/spi/UserRepository/IUserRepository';
 
 export class AccountService implements IAccountService {
@@ -14,14 +14,12 @@ export class AccountService implements IAccountService {
 
     getAllUserAccounts(userId: string) {
         if (!userId) {
-            // TODO : Throw InvalidUserId exception
-            throw new Error('InvalidUserId');
+            throw new Error('Invalid user id');
         }
 
         const user = this.userRepository.findUserById(userId);
         if (!user || !user.isValid()) {
-            // TODO : Thow UserNotFound exception
-            throw new Error('UserNotFound');
+            throw new Error('User not found');
         }
 
         return this.accountRepository.findUserAccounts(user);
