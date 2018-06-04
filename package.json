@@ -4,11 +4,28 @@
   "description": "Treasury management made easy",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --coverage"
   },
   "author": "Thomas Ferro",
   "license": "MIT",
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  },
   "devDependencies": {
+    "@types/jest": "^23.0.0",
+    "jest": "^23.1.0",
+    "ts-jest": "^22.4.6",
     "typescript": "^2.9.1"
   }
 }
