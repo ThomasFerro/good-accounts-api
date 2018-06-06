@@ -13,6 +13,10 @@
       "^.+\\.tsx?$": "ts-jest"
     },
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/*/__mock__"
+    ],
     "moduleFileExtensions": [
       "ts",
       "tsx",
