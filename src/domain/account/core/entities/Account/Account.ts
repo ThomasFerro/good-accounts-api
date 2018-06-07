@@ -1,3 +1,6 @@
+import { User } from '../../../../user/core/entities/User/User';
+
 export class Account {
-    accountId: string
+    accountId: string;
+    users: Array<User>;
 };

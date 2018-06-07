@@ -13,7 +13,7 @@ export class AccountService implements IAccountService {
         this.userRepository = userRepository;
     }
 
-    getAllUserAccounts(userId: string) {
+    getUser(userId: string) {
         if (!userId) {
             throw new Error('Invalid user id');
         }
@@ -23,6 +23,34 @@ export class AccountService implements IAccountService {
             throw new Error('User not found');
         }
 
+        return user;
+    }
+
+    getAllUserAccounts(userId: string) {
+        const user = this.getUser(userId);
+
         return this.accountRepository.findUserAccounts(user);
+    }
+
+    getAccount(accountId: string, userId: string) {
+        const user = this.getUser(userId);
+
+        if (!accountId) {
+            throw new Error('Invalid account id');
+        }
+        
+        const account = this.accountRepository.findAccountById(accountId);
+        if (!account) {
+            throw new Error('Account not found');
+        }
+
+        if (!account.users ||
+            !account.users.find((user) => {
+                return user && user.userId === userId;
+            })) {
+            throw new Error('Unauthorized operation');
+        }
+        
+        return account;
     }
 };

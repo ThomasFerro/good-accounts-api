@@ -1,40 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1528372366064" clover="3.2.0">
-  <project timestamp="1528372366064" name="All files">
-    <metrics statements="17" coveredstatements="17" conditionals="6" coveredconditionals="6" methods="6" coveredmethods="6" elements="29" coveredelements="29" complexity="0" loc="17" ncloc="17" packages="3" files="3" classes="3">
+<coverage generated="1528402033382" clover="3.2.0">
+  <project timestamp="1528402033383" name="All files">
+    <metrics statements="24" coveredstatements="24" conditionals="16" coveredconditionals="16" methods="6" coveredmethods="6" elements="46" coveredelements="46" complexity="0" loc="24" ncloc="24" packages="3" files="3" classes="3">
       <package name="account.core.AccountService">
-        <metrics statements="11" coveredstatements="11" conditionals="6" coveredconditionals="6" methods="3" coveredmethods="3"/>
+        <metrics statements="21" coveredstatements="21" conditionals="16" coveredconditionals="16" methods="5" coveredmethods="5"/>
         <file name="AccountService.ts" path="/home/thomasf/git/good-accounts-api/src/domain/account/core/AccountService/AccountService.ts">
-          <metrics statements="11" coveredstatements="11" conditionals="6" coveredconditionals="6" methods="3" coveredmethods="3"/>
+          <metrics statements="21" coveredstatements="21" conditionals="16" coveredconditionals="16" methods="5" coveredmethods="5"/>
           <line num="7" count="1" type="stmt"/>
-          <line num="12" count="5" type="stmt"/>
-          <line num="13" count="5" type="stmt"/>
-          <line num="16" count="1" type="stmt"/>
-          <line num="17" count="5" type="cond" truecount="2" falsecount="0"/>
-          <line num="18" count="1" type="stmt"/>
-          <line num="21" count="4" type="stmt"/>
-          <line num="22" count="4" type="cond" truecount="4" falsecount="0"/>
-          <line num="23" count="1" type="stmt"/>
-          <line num="26" count="3" type="stmt"/>
-          <line num="28" count="1" type="stmt"/>
+          <line num="12" count="13" type="stmt"/>
+          <line num="13" count="13" type="stmt"/>
+          <line num="17" count="13" type="cond" truecount="2" falsecount="0"/>
+          <line num="18" count="2" type="stmt"/>
+          <line num="21" count="11" type="stmt"/>
+          <line num="22" count="11" type="cond" truecount="4" falsecount="0"/>
+          <line num="23" count="2" type="stmt"/>
+          <line num="26" count="9" type="stmt"/>
+          <line num="30" count="5" type="stmt"/>
+          <line num="32" count="3" type="stmt"/>
+          <line num="36" count="8" type="stmt"/>
+          <line num="38" count="6" type="cond" truecount="2" falsecount="0"/>
+          <line num="39" count="1" type="stmt"/>
+          <line num="42" count="5" type="stmt"/>
+          <line num="43" count="5" type="cond" truecount="2" falsecount="0"/>
+          <line num="44" count="1" type="stmt"/>
+          <line num="47" count="4" type="cond" truecount="4" falsecount="0"/>
+          <line num="49" count="3" type="cond" truecount="2" falsecount="0"/>
+          <line num="51" count="1" type="stmt"/>
+          <line num="54" count="3" type="stmt"/>
         </file>
       </package>
       <package name="account.core.entities.Account">
-        <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <file name="Account.ts" path="/home/thomasf/git/good-accounts-api/src/domain/account/core/entities/Account/Account.ts">
-          <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
-          <line num="1" count="1" type="stmt"/>
+          <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
           <line num="3" count="1" type="stmt"/>
         </file>
       </package>
       <package name="user.core.entities.User">
-        <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+        <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <file name="User.ts" path="/home/thomasf/git/good-accounts-api/src/domain/user/core/entities/User/User.ts">
-          <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+          <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
           <line num="1" count="2" type="stmt"/>
-          <line num="4" count="2" type="stmt"/>
-          <line num="5" count="5" type="stmt"/>
-          <line num="7" count="2" type="stmt"/>
+          <line num="5" count="11" type="stmt"/>
         </file>
       </package>
     </metrics>
