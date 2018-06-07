@@ -8,8 +8,9 @@ export class AccountService implements IAccountService {
     private accountRepository: IAccountRepository;
     private userRepository: IUserRepository;
     
-    constructor(accountRepository: IAccountRepository) {
+    constructor(accountRepository: IAccountRepository, userRepository: IUserRepository) {
         this.accountRepository = accountRepository;
+        this.userRepository = userRepository;
     }
 
     getAllUserAccounts(userId: string) {
