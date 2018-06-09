@@ -11,9 +11,13 @@ export class AccountRepositoryMock implements IAccountRepository {
 
     findAccountById = jest.fn((accountId: string): Account => {
         return null;
-    })
+    });
 
     createAccount = jest.fn((account: Account): Account => {
         return null;
-    })
+    });
+
+    updateAccount = jest.fn((account: Account): Account => {
+        return null;
+    });
 };

@@ -81,4 +81,25 @@ export class AccountService implements IAccountService {
 
         return createAccount;
     }
+
+    modifyAccount(account: Account, userId: string): Account {
+        const user = this.getUser(userId);
+
+        if (!account || !account.accountId || !account.isValid()) {
+            throw new Error('Invalid account');
+        }
+        
+        if (!account.creator ||
+            account.creator.userId !== user.userId) {
+            throw new Error('Unauthorized operation');
+        }
+
+        const updatedAccount = this.accountRepository.updateAccount(account);
+
+        if (!updatedAccount || !updatedAccount.isValid()) {
+            throw new Error('Invalid updated account');
+        }
+
+        return updatedAccount;
+    }
 };
