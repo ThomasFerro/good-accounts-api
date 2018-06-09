@@ -381,4 +381,64 @@ describe('AccountService', () => {
             expect(accountService.modifyAccount(modifiedAccount, USER_ID)).toBe(modifiedAccount);
         });
     });
+
+    describe('remove account', () => {
+        beforeEach(() => {
+            accountRepositoryMock.deleteAccount = jest.fn((accountId: string): boolean => {
+                return true;
+            });
+        });
+
+        it('should get the account informations', () => {
+            accountService.getAccount = jest.fn();
+            
+            accountService.removeAccount(ACCOUNT_ID, USER_ID);
+
+            expect(accountService.getAccount).toHaveBeenCalledWith(ACCOUNT_ID, USER_ID);
+        })
+
+        // No need to test getAccount again
+
+        it('should throw an error if the user is not the account creator', () => {
+            accountRepositoryMock.findAccountById = jest.fn((accountId: string, userId: string): Account => {
+                const randomUser = new User();
+                randomUser.userId = "RANDOM_USER";
+                const user = new User();
+                user.userId = USER_ID;
+                
+                const foundAccount = new Account();
+                foundAccount.accountId = ACCOUNT_ID;
+                foundAccount.name = ACCOUNT_NAME;
+                foundAccount.creator = randomUser;
+                foundAccount.users = [ randomUser, user ];
+
+                return foundAccount;
+            });
+
+            expect(() => {
+                accountService.removeAccount(ACCOUNT_ID, USER_ID);
+            }).toThrowError('Unauthorized operation');
+        });
+        
+        it('should call the account repository to remove the requested account', () => {
+            accountService.removeAccount(ACCOUNT_ID, USER_ID);
+            expect(accountRepositoryMock.deleteAccount).toHaveBeenCalledWith(ACCOUNT_ID);
+        });
+
+        it('should throw an error if the removal fails', () => {
+            const REMOVAL_FAILS_ERROR = 'REMOVAL_FAILS_ERROR';
+            
+            accountRepositoryMock.deleteAccount = jest.fn((accountId: string): boolean => {
+                throw new Error(REMOVAL_FAILS_ERROR);
+            });
+
+            expect(() => {
+                accountService.removeAccount(ACCOUNT_ID, USER_ID);
+            }).toThrowError(REMOVAL_FAILS_ERROR);
+        });
+
+        it('should return true if the removal succeeds', () => {
+            expect(accountService.removeAccount(ACCOUNT_ID, USER_ID)).toBe(true);
+        });
+    });
 });

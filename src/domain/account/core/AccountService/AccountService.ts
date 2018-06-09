@@ -102,4 +102,16 @@ export class AccountService implements IAccountService {
 
         return updatedAccount;
     }
+
+    removeAccount(accountId: string, userId: string): boolean {
+        const account = this.getAccount(accountId, userId);
+        
+        if (account &&
+            account.creator &&
+            account.creator.userId !== userId) {
+            throw new Error('Unauthorized operation');
+        }
+
+        return this.accountRepository.deleteAccount(accountId);
+    }
 };

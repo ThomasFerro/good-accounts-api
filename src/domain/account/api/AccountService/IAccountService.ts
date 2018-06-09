@@ -8,4 +8,6 @@ export interface IAccountService {
     createAccount(account: Account, userId: string): Account;
 
     modifyAccount(account: Account, userId: string): Account;
+
+    removeAccount(accountId: string, userId: string): boolean;
 };

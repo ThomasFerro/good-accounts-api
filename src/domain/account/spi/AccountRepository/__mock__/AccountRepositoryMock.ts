@@ -20,4 +20,8 @@ export class AccountRepositoryMock implements IAccountRepository {
     updateAccount = jest.fn((account: Account): Account => {
         return null;
     });
+
+    deleteAccount = jest.fn((accountId: string, userId: string): boolean => {
+        return null;
+    });
 };
