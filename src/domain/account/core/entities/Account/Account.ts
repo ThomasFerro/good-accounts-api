@@ -9,6 +9,6 @@ export class Account {
     transactions: Array<any>;
 
     isValid(): boolean {
-        return !!(this.accountId && this.name);
+        return !!this.name;
     }
 };

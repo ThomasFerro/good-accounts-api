@@ -1,6 +1,8 @@
 import { IAccountService } from '../../api/AccountService/IAccountService';
 import { IAccountRepository } from '../../spi/AccountRepository/IAccountRepository';
 
+import { Account } from '../entities/Account/Account';
+
 import { User } from '../../../user/core/entities/User/User';
 import { IUserRepository } from '../../../user/spi/UserRepository/IUserRepository';
 
@@ -13,7 +15,7 @@ export class AccountService implements IAccountService {
         this.userRepository = userRepository;
     }
 
-    getUser(userId: string) {
+    getUser(userId: string): User {
         if (!userId) {
             throw new Error('Invalid user id');
         }
@@ -26,13 +28,13 @@ export class AccountService implements IAccountService {
         return user;
     }
 
-    getAllUserAccounts(userId: string) {
+    getAllUserAccounts(userId: string): Array<Account> {
         const user = this.getUser(userId);
 
         return this.accountRepository.findUserAccounts(user);
     }
 
-    getAccount(accountId: string, userId: string) {
+    getAccount(accountId: string, userId: string): Account {
         const user = this.getUser(userId);
 
         if (!accountId) {
@@ -40,8 +42,13 @@ export class AccountService implements IAccountService {
         }
         
         const account = this.accountRepository.findAccountById(accountId);
+        
         if (!account) {
             throw new Error('Account not found');
+        }
+
+        if (!account.isValid()) {
+            throw new Error('Invalid account');
         }
 
         if (!account.users ||
@@ -52,5 +59,26 @@ export class AccountService implements IAccountService {
         }
         
         return account;
+    }
+
+    createAccount(account: Account, userId: string): Account {
+        const user = this.getUser(userId);
+
+        if (!account || !account.isValid()) {
+            throw new Error('Invalid account');
+        }
+
+        const newAccount = new Account();
+        newAccount.name = account.name;
+        newAccount.creator = user;
+        newAccount.users = [ user ];
+
+        const createAccount = this.accountRepository.createAccount(newAccount);
+        
+        if (!createAccount || !createAccount.isValid()) {
+            throw new Error('Invalid created account');
+        }
+
+        return createAccount;
     }
 };

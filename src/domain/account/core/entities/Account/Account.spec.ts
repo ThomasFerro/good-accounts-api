@@ -8,19 +8,12 @@ describe('Account entity', () => {
             account = new Account();
         });
         
-        test('should be valid when providing an id and a name', () => {
-            account.accountId = 'ACCOUNT_ID';
+        test('should be valid when providing an account name', () => {
             account.name = 'ACCOUNT_NAME';
             expect(account.isValid()).toBeTruthy();
         });
 
-        test('should be invalid when providing no id', () => {            
-            account.name = 'ACCOUNT_NAME';
-            expect(account.isValid()).toBeFalsy();
-        });
-
         test('should be invalid when providing no name', () => {            
-            account.accountId = 'ACCOUNT_ID';
             expect(account.isValid()).toBeFalsy();
         });
     });

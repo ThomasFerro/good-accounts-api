@@ -4,4 +4,6 @@ export interface IAccountService {
     getAllUserAccounts(userId: string): Array<Account>
 
     getAccount(accountId: string, userId: string): Account
+
+    createAccount(account: Account, userId: string): Account
 };
