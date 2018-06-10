@@ -20,6 +20,7 @@ describe('TransactionService', () => {
 
     const ACCOUNT_ID: string = 'ACCOUNT_ID';
     const USER_ID: string = 'USER_ID';
+    const TRANSACTION_ID: string = 'TRANSACTION_ID';
     const TRANSACTION_NAME: string = 'TRANSACTION_NAME';
     const TRANSACTION_DESCRIPTION: string = 'TRANSACTION_DESCRIPTION';
     const TRANSACTION_DATE: Date = new Date();
@@ -199,6 +200,50 @@ describe('TransactionService', () => {
     });
 
     describe('remove transaction', () => {
+        beforeEach(() => {
+            transactionRepositoryMock.deleteTransaction = jest.fn((account: Account, transactionId: string): boolean => {
+                return true;
+            });
+        });
+        
+        it('should throw an error when providing no account id', () => {
+            expect(() => {
+                transactionService.removeTransactionFromAccount('', TRANSACTION_ID, USER_ID);
+            }).toThrowError('Invalid account id');
+        });
 
+        it('should throw an error when providing no user id', () => {
+            expect(() => {
+                transactionService.removeTransactionFromAccount(ACCOUNT_ID, TRANSACTION_ID, '');
+            }).toThrowError('Invalid user id');
+        });
+
+        it('should throw an error when providing no transaction id', () => {
+            expect(() => {
+                transactionService.removeTransactionFromAccount(ACCOUNT_ID, '', USER_ID);
+            }).toThrowError('Invalid transaction id');
+        });
+
+        it('should call the transaction repository to remove the transaction', () => {
+            transactionService.removeTransactionFromAccount(ACCOUNT_ID, TRANSACTION_ID, USER_ID);
+
+            expect(transactionRepositoryMock.deleteTransaction).toHaveBeenCalledWith(ACCOUNT, TRANSACTION_ID);
+        });
+
+        it('should throw an error if the transaction removal fails', () => {
+            const TRANSACTION_REMOVAL_ERROR = 'TRANSACTION_REMOVAL_ERROR';
+
+            transactionRepositoryMock.deleteTransaction = jest.fn((account: Account, transactionId: string): boolean =>  {
+                throw new Error(TRANSACTION_REMOVAL_ERROR);
+            });
+
+            expect(() => {
+                transactionService.removeTransactionFromAccount(ACCOUNT_ID, TRANSACTION_ID, USER_ID);
+            }).toThrowError(TRANSACTION_REMOVAL_ERROR);
+        });
+
+        it('should return true if the transaction removal succeeds', () => {
+            expect(transactionService.removeTransactionFromAccount(ACCOUNT_ID, TRANSACTION_ID, USER_ID)).toBe(true);
+        });
     });
 });

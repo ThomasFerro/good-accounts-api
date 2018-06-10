@@ -12,7 +12,7 @@ export class TransactionRepositoryMock implements ITransactionRepository {
         return null;
     });
 
-    deleteTransaction = jest.fn((transactionId: string): boolean => {
+    deleteTransaction = jest.fn((account: Account, transactionId: string): boolean => {
         return null;
     });
 }

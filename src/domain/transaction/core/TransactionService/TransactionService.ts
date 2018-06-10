@@ -44,6 +44,12 @@ export class TransactionService implements ITransactionService {
     };
 
     removeTransactionFromAccount(accountId: string, transactionId: string, userId: string): boolean {
-        return null;
+        if (!transactionId) {
+            throw new Error('Invalid transaction id');
+        }
+        
+        const account = this.getAccount(accountId, userId);
+        
+        return this.transactionRepository.deleteTransaction(account, transactionId);
     };
 };

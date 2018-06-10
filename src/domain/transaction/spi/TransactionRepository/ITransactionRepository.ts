@@ -6,5 +6,5 @@ export interface ITransactionRepository {
 
     createTransaction(account: Account, transaction: Transaction): Transaction;
 
-    deleteTransaction(transactionId: string): boolean;
+    deleteTransaction(account: Account, transactionId: string): boolean;
 };
