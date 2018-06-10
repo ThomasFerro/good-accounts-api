@@ -123,7 +123,79 @@ describe('TransactionService', () => {
     });
 
     describe('add transaction to account', () => {
+        const NEW_TRANSACTION_NAME: string = 'NEW_TRANSACTION_NAME';
+        const CREATED_TRANSACTION_ID: string = 'CREATED_TRANSACTION_ID';
+        let NEW_TRANSACTION: Transaction;
+        let CREATED_TRANSACTION: Transaction;
 
+        beforeEach(() => {
+            NEW_TRANSACTION = createTransaction(NEW_TRANSACTION_NAME);
+            CREATED_TRANSACTION = createTransaction(NEW_TRANSACTION_NAME);
+            CREATED_TRANSACTION.transactionId = CREATED_TRANSACTION_ID; 
+
+            transactionRepositoryMock.createTransaction = jest.fn((account: Account, transaction: Transaction): Transaction => {
+                return CREATED_TRANSACTION;
+            });
+        });
+
+        it('should throw an error when providing no account id', () => {
+            expect(() => {
+                transactionService.addTransactionToAccount('', NEW_TRANSACTION, USER_ID);
+            }).toThrowError('Invalid account id');
+        });
+
+        it('should throw an error when providing no user id', () => {
+            expect(() => {
+                transactionService.addTransactionToAccount(ACCOUNT_ID, NEW_TRANSACTION, '');
+            }).toThrowError('Invalid user id');
+        });
+
+        it('should throw an error when providing an invalid transaction', () => {
+            expect(() => {
+                NEW_TRANSACTION.name = null;
+                transactionService.addTransactionToAccount(ACCOUNT_ID, NEW_TRANSACTION, USER_ID);
+            }).toThrowError('Invalid transaction');
+        });
+
+        it('should call the account repository to get the requested account', () => {
+            transactionService.addTransactionToAccount(ACCOUNT_ID, NEW_TRANSACTION, USER_ID);
+
+            expect(accountServiceMock.getAccount).toHaveBeenCalledWith(ACCOUNT_ID, USER_ID);
+        });
+
+        it('should throw an error if the account fetching fails', () => {
+            const GET_ACCOUNT_ERROR = 'GET_ACCOUNT_ERROR';
+
+            accountServiceMock.getAccount = jest.fn((accountId: string, userId: string): Account => {
+                throw new Error(GET_ACCOUNT_ERROR);
+            });
+
+            expect(() => {
+                transactionService.addTransactionToAccount(ACCOUNT_ID, NEW_TRANSACTION, USER_ID);
+            }).toThrowError(GET_ACCOUNT_ERROR);
+        });
+
+        it('shoul call the transaction repository to create the transaction', () => {
+            transactionService.addTransactionToAccount(ACCOUNT_ID, NEW_TRANSACTION, USER_ID);
+
+            expect(transactionRepositoryMock.createTransaction).toHaveBeenCalledWith(ACCOUNT, NEW_TRANSACTION);
+        });
+
+        it('should throw an error if the transaction creation fails', () => {
+            const TRANSACTION_CREATION_ERROR = 'TRANSACTION_CREATION_ERROR';
+
+            transactionRepositoryMock.createTransaction = jest.fn((account: Account, transaction: Transaction): Transaction =>  {
+                throw new Error(TRANSACTION_CREATION_ERROR);
+            });
+
+            expect(() => {
+                transactionService.addTransactionToAccount(ACCOUNT_ID, NEW_TRANSACTION, USER_ID);
+            }).toThrowError(TRANSACTION_CREATION_ERROR);
+        });
+
+        it('should return the created transaction if everything succeeds', () => {
+            expect(transactionService.addTransactionToAccount(ACCOUNT_ID, NEW_TRANSACTION, USER_ID)).toBe(CREATED_TRANSACTION);
+        });
     });
 
     describe('remove transaction', () => {
