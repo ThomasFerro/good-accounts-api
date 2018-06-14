@@ -20,6 +20,9 @@ describe('TransactionService', () => {
 
     const ACCOUNT_ID: string = 'ACCOUNT_ID';
     const USER_ID: string = 'USER_ID';
+    const USER_LOGIN: string = 'USER_LOGIN';
+    const USER_EMAIL: string = 'USER_EMAIL';
+    const USER_NAME: string = 'USER_NAME';
     const TRANSACTION_ID: string = 'TRANSACTION_ID';
     const TRANSACTION_NAME: string = 'TRANSACTION_NAME';
     const TRANSACTION_DESCRIPTION: string = 'TRANSACTION_DESCRIPTION';
@@ -45,6 +48,9 @@ describe('TransactionService', () => {
     beforeEach(() => {
         USER = new User();
         USER.userId = USER_ID;
+        USER.login = USER_LOGIN;
+        USER.email = USER_EMAIL;
+        USER.name = USER_NAME;
 
         ACCOUNT = new Account();
         ACCOUNT.accountId = ACCOUNT_ID;
