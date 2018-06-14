@@ -30,8 +30,14 @@ export class InMemoryAccountRepository implements IAccountRepository {
     }
 
     createAccount(account: Account): Account {
-        this.accounts.push(account);
-        return account;
+        const createAccount: Account = new Account();
+        createAccount.name = account.name;
+        createAccount.transactions = account.transactions;
+        createAccount.users = account.users;
+        createAccount.creator = account.creator;
+        createAccount.accountId = this.generateGuid();
+        this.accounts.push(createAccount);
+        return createAccount;
     }
 
     updateAccount(updatedAccount: Account): Account {
@@ -63,5 +69,14 @@ export class InMemoryAccountRepository implements IAccountRepository {
         }
 
         return success;
+    }
+
+    private generateGuid(): string {
+        const s4 = (): string => {
+            return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+        }
+        return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
     }
 };
