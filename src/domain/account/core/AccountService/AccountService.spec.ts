@@ -13,6 +13,9 @@ describe('AccountService', () => {
     let userRepositoryMock: IUserRepository;
 
     const USER_ID = 'USER_ID';
+    const USER_NAME = 'USER_NAME';
+    const USER_EMAIL = 'USER_EMAIL';
+    const USER_LOGIN = 'USER_LOGIN';
     const ACCOUNT_ID = 'ACCOUNT_ID';
     const ACCOUNT_NAME = 'ACCOUNT_NAME';
 
@@ -31,6 +34,9 @@ describe('AccountService', () => {
         userRepositoryMock.findUserById = jest.fn((userId) => {
             const user = new User();
             user.userId = userId;
+            user.login = USER_LOGIN;
+            user.email = USER_EMAIL;
+            user.name = USER_NAME;
             return user;
         })
 
@@ -40,6 +46,9 @@ describe('AccountService', () => {
             account.name = ACCOUNT_NAME;
             const user = new User();
             user.userId = USER_ID;
+            user.login = USER_LOGIN;
+            user.email = USER_EMAIL;
+            user.name = USER_NAME;
             account.users = [ user ];
             return account;
         })
@@ -72,6 +81,9 @@ describe('AccountService', () => {
         it('should call the accountRepository to find the user\'s accounts', () => {
             const user = new User();
             user.userId = USER_ID;
+            user.login = USER_LOGIN;
+            user.email = USER_EMAIL;
+            user.name = USER_NAME;
 
             accountService.getAllUserAccounts(USER_ID);
             expect(accountRepositoryMock.findUserAccounts).toHaveBeenCalledWith(user);
@@ -189,6 +201,9 @@ describe('AccountService', () => {
 
             accountCreator = new User();
             accountCreator.userId = USER_ID;
+            accountCreator.login = USER_LOGIN;
+            accountCreator.email = USER_EMAIL;
+            accountCreator.name = USER_NAME;
 
             formattedNewAccount = new Account();
             formattedNewAccount.name = ACCOUNT_NAME;
@@ -272,6 +287,9 @@ describe('AccountService', () => {
         beforeEach(() => {
             accountCreator = new User();
             accountCreator.userId = USER_ID;
+            accountCreator.login = USER_LOGIN;
+            accountCreator.email = USER_EMAIL;
+            accountCreator.name = USER_NAME;
 
             modifiedAccount = new Account();
             modifiedAccount.accountId = ACCOUNT_ID;
@@ -313,6 +331,9 @@ describe('AccountService', () => {
             userRepositoryMock.findUserById = jest.fn(() => {
                 const foundUser = new User();
                 foundUser.userId = 'ANOTHER_USER';
+                foundUser.login = USER_LOGIN;
+                foundUser.email = USER_EMAIL;
+                foundUser.name = USER_NAME;
                 return foundUser;
             })
             
