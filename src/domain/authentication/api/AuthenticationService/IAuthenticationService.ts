@@ -8,5 +8,5 @@ export interface IAuthenticationService {
 
     decodeToken(token: string): Promise<User>;
 
-    generateToken(user: User): string;
+    generateToken(username: string, password: string): Promise<string>;
 };

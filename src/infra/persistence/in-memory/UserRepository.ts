@@ -21,6 +21,19 @@ export class InMemoryUserRepository implements IUserRepository {
         });
     };
 
+    findUserByLogin(login: string): User {
+        if (!login) {
+            throw new Error('Invalid login');
+        }
+
+        
+
+        return this.users.find((user: User) => {
+            return user &&
+                user.login === login;
+        });
+    };
+
     searchUsers(query: string): Array<User> {
         if (!query) {
             return [];

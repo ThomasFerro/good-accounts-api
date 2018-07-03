@@ -1,5 +1,5 @@
 export class User {
-    constructor(user: any) {
+    constructor(user?: any) {
         this.userId = user && user.userId;
         this.login = user && user.login;
         this.name = user && user.name;
@@ -19,5 +19,14 @@ export class User {
 
     isValid(): boolean {
         return !!(this.login && this.name && this.email);
-    }
+    };
+
+    userInfo(): any {
+        return {
+            userId: this.userId,
+            login: this.login,
+            name: this.name,
+            email: this.email,
+        };
+    };
 };
