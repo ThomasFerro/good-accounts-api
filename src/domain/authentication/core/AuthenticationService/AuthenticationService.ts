@@ -1,19 +1,17 @@
-// TODO: Extract in encryption SPI
-import * as jsonwebtoken from 'jsonwebtoken';
-import * as bcrypt from 'bcrypt';
-
 import { IAuthenticationService } from '../../api/AuthenticationService/IAuthenticationService';
+
+import { IEncryptionProvider } from '../../spi/EncryptionProvider/IEncryptionProvider';
 
 import { IUserRepository } from '../../../user/spi/UserRepository/IUserRepository';
 import { User } from '../../../user/core/entities/User/User';
 
 export class AuthenticationService implements IAuthenticationService {
     userRepository: IUserRepository;
-    jwtKey: string;
+    encryptionProvider: IEncryptionProvider;
     
-    constructor(userRepository: IUserRepository) {
+    constructor(userRepository: IUserRepository, encryptionProvider: IEncryptionProvider) {
         this.userRepository = userRepository;
-        this.jwtKey = 'TEMPORARYKEY';
+        this.encryptionProvider = encryptionProvider;
     }
 
     decodeToken(token: string): Promise<User> {
@@ -22,18 +20,14 @@ export class AuthenticationService implements IAuthenticationService {
                 reject('Invalid token');
             }
 
-            jsonwebtoken.verify(token, this.jwtKey, (err, decodedToken) => {
-                if (err) {
-                    reject(err);
-                }
-                resolve(new User(decodedToken));
-            });
+            this.encryptionProvider.verifyToken(token)
+                .then(resolve)
+                .catch(reject);
         });
     };
 
     generateToken(username: string, password: string): Promise<string> {
         return new Promise((resolve, reject) => {
-
             if (!username) {
                 reject('Invalid user name');
             } else if (!password) {
@@ -45,15 +39,10 @@ export class AuthenticationService implements IAuthenticationService {
                 if (!user || !user.isValid()) {
                     reject('User not found');
                 }
-    
-                bcrypt.compare(password, user.password, (compareError, compareResult) => {
 
-                    if (!compareResult) {
-                        reject('Passwords does not match');
-                    } else {
-                        resolve(jsonwebtoken.sign(user.userInfo(), this.jwtKey));
-                    }
-                });
+                this.encryptionProvider.comparePassword(password, user)
+                    .then(resolve)
+                    .catch(reject);
             }
         });
     };

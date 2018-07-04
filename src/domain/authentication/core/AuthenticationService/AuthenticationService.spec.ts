@@ -1,24 +1,27 @@
-import * as jsonwebtoken from 'jsonwebtoken';
-import * as bcrypt from 'bcrypt';
-
 import { IAuthenticationService } from '../../api/AuthenticationService/IAuthenticationService';
 import { AuthenticationService } from './AuthenticationService';
+
+import { IEncryptionProvider } from '../../spi/EncryptionProvider/IEncryptionProvider';
+import { EncryptionProviderMock } from '../../spi/EncryptionProvider/__mock__/EncryptionProviderMock';
 
 import { IUserRepository } from '../../../user/spi/UserRepository/IUserRepository';
 import { UserRepositoryMock } from '../../../user/spi/UserRepository/__mock__/UserRepositoryMock';
 import { User } from '../../../user/core/entities/User/User';
 
 describe('AuthenticationService', () => {
-    const JWT_KEY = 'TEMPORARYKEY';
-
     let authenticationService: IAuthenticationService;
     
+    let encryptionProvider: IEncryptionProvider;
+
     let userRepository: IUserRepository;
+
+    const TOKEN = 'TOKEN';
 
     beforeEach(() => {
         userRepository = new UserRepositoryMock();
+        encryptionProvider = new EncryptionProviderMock();
 
-        authenticationService = new AuthenticationService(userRepository);
+        authenticationService = new AuthenticationService(userRepository, encryptionProvider);
     });
 
     describe('decodeToken', () => {
@@ -30,22 +33,44 @@ describe('AuthenticationService', () => {
                 });
         });
 
-        it('should fall in catch statement if the token is invalid', (done) => {
-            const INVALID_TOKEN = 'INVALID_TOKEN';
+        it('should call the encryption provider to decode the token', () => {
+            authenticationService.decodeToken(TOKEN);
 
-            authenticationService.decodeToken(INVALID_TOKEN)
+            expect(encryptionProvider.verifyToken).toHaveBeenCalledWith(TOKEN);
+        });
+
+        it('should fall in catch statement if the token verification fails', (done) => {
+            const VERIFY_TOKEN_ERROR = 'VERIFY_TOKEN_ERROR';
+
+            encryptionProvider.verifyToken = jest.fn((token: string): Promise<User> => {
+                return new Promise<User>((resolve, reject) => {
+                    reject(VERIFY_TOKEN_ERROR);
+                });
+            });
+
+            authenticationService.decodeToken(TOKEN)
                 .catch((error) => {
-                    expect(error).toBeInstanceOf(jsonwebtoken.JsonWebTokenError);
+                    expect(error).toBe(VERIFY_TOKEN_ERROR);
                     done();
                 });
         });
 
-        it('should return user information if the token is valid', (done) => {
-            const jwt = jsonwebtoken.sign({ userId: 'USER_ID' }, JWT_KEY);
+        it('should return user information if the token verification succeeds', (done) => {
+            const USER = new User({
+                email: "EMAIL",
+                login: "LOGIN",
+                name: "NAME",
+            });
+
+            encryptionProvider.verifyToken = jest.fn((token: string): Promise<User> => {
+                return new Promise<User>((resolve, reject) => {
+                    resolve(USER);
+                });
+            });
             
-            authenticationService.decodeToken(jwt)
+            authenticationService.decodeToken(TOKEN)
                 .then((user) => {
-                    expect(user).toBeInstanceOf(User);
+                    expect(user).toBe(USER);
                     done();
                 });
         });
@@ -54,25 +79,16 @@ describe('AuthenticationService', () => {
     describe('generateToken', () => {
         const USERNAME: string = "USERNAME";
         const PASSWORD: string = "PASSWORD";
-        let user: User;
-        let encryptedPassword: string;
-
-        beforeAll((done) => {
-            bcrypt.hash(PASSWORD, 12, (hashErr, hash) => {
-                encryptedPassword = hash;
-                user = new User({
-                    login: USERNAME,
-                    name: USERNAME,
-                    password: encryptedPassword,
-                    email: 'EMAIL',
-                });
-                done();
-            });
+        const USER: User = new User({
+            login: USERNAME,
+            name: USERNAME,
+            password: PASSWORD,
+            email: 'EMAIL',
         });
 
         beforeEach(() => {
             userRepository.findUserByLogin = jest.fn((login: string): User => {
-                return user;
+                return USER;
             });
         });
 
@@ -110,27 +126,40 @@ describe('AuthenticationService', () => {
                 });
         });
 
-        it('should fall in catch statement if the user\'s password does not match', (done) => {
-            userRepository.findUserByLogin = jest.fn((login: string): User => {
-                return new User({
-                    login: USERNAME,
-                    name: USERNAME,
-                    password: PASSWORD,
-                    email: 'EMAIL'
+        it('should call the encryption provider to compare the password', () => {
+            authenticationService.generateToken(USERNAME, PASSWORD);
+
+            expect(encryptionProvider.comparePassword).toHaveBeenCalledWith(PASSWORD, USER);
+        });
+
+        it('should fall in catch statement if the comparison fails', (done) => {
+            const COMPARISON_ERROR = 'COMPARISON_ERROR';
+
+            encryptionProvider.comparePassword = jest.fn((password: string, user: User): Promise<string> => {
+                return new Promise((resolve, reject) => {
+                    reject(COMPARISON_ERROR);
                 });
             });
             
             authenticationService.generateToken(USERNAME, PASSWORD)
                 .catch((error) => {
-                    expect(error).toBe('Passwords does not match');
+                    expect(error).toBe(COMPARISON_ERROR);
                     done();
                 });
         });
 
-        it('should return a JWT with the user\'s information if the password matchest', (done) => {
+        it('should return a JWT with the user\'s information if the comparison succeeds', (done) => {
+            const JWT = 'JWT';
+
+            encryptionProvider.comparePassword = jest.fn((password: string, user: User): Promise<string> => {
+                return new Promise((resolve, reject) => {
+                    resolve(JWT);
+                });
+            });
+
             authenticationService.generateToken(USERNAME, PASSWORD)
                 .then((jwt) => {
-                    expect(new User(jsonwebtoken.decode(jwt))).toEqual(new User(user.userInfo()));
+                    expect(jwt).toEqual(JWT);
                     done();
                 });
         });
