@@ -6,6 +6,10 @@ export class UserRepositoryMock implements IUserRepository {
         return null;
     });
 
+    findUserByLogin = jest.fn((login: string): User => {
+        return null;
+    });
+
     searchUsers = jest.fn((query: string): Array<User> => {
         return null;
     });

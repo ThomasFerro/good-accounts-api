@@ -11,23 +11,70 @@ describe('User entity', () => {
             user.name = 'USER_NAME';
         });
 
-        test('should be invalid when providing no email', () => {
+        it('should be invalid when providing no email', () => {
             user.email = '';
             expect(user.isValid()).toBeFalsy();
         });
 
-        test('should be invalid when providing no login', () => {
+        it('should be invalid when providing no login', () => {
             user.login = '';
             expect(user.isValid()).toBeFalsy();
         });
 
-        test('should be invalid when providing no name', () => {
+        it('should be invalid when providing no name', () => {
             user.name = '';
             expect(user.isValid()).toBeFalsy();
         });
         
-        test('should be valid when providing all mandatory informations', () => {
+        it('should be valid when providing all mandatory informations', () => {
             expect(user.isValid()).toBeTruthy();
+        });
+    });
+
+    describe('userInfo', () => {
+        let user: User;
+        let userInfo: User;
+
+        beforeEach(() => {
+            user = new User({
+                userId: 'USER_ID',
+                login: 'LOGIN',
+                name: 'NAME',
+                email: 'EMAIL',
+                password: 'PASSWORD',
+                passwordSalt: 'PASSWORD_SALT',
+                passwordHashAlgorithm: 'PASSWORD_HASH_ALGORITHM'
+            });
+
+            userInfo = user.userInfo();
+        });
+
+        it('should return the user\'s id', () => {
+            expect(userInfo && userInfo.userId).toBe(user.userId);
+        });
+
+        it('should return the user\'s login', () => {
+            expect(userInfo && userInfo.login).toBe(user.login);
+        });
+
+        it('should return the user\'s name', () => {
+            expect(userInfo && userInfo.name).toBe(user.name);
+        });
+
+        it('should return the user\'s email', () => {
+            expect(userInfo && userInfo.email).toBe(user.email);
+        });
+
+        it('should not return the user\'s password', () => {
+            expect(userInfo && userInfo.password).toBeFalsy();
+        });
+
+        it('should not return the user\'s password salt', () => {
+            expect(userInfo && userInfo.passwordSalt).toBeFalsy();
+        });
+
+        it('should not return the user\'s id', () => {
+            expect(userInfo && userInfo.passwordHashAlgorithm).toBeFalsy();
         });
     });
 });
