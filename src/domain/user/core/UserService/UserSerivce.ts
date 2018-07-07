@@ -24,6 +24,10 @@ export class UserService implements IUserService {
             throw new Error('Invalid user');
         }
 
+        if (this.userRepository.findUserByLogin(user.login)) {
+            throw new Error('User already exists');
+        }
+
         return this.userRepository.createUser(user);
     };
 

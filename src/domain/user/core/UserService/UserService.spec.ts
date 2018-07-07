@@ -70,10 +70,32 @@ describe('UserService', () => {
     describe('create user', () => {
         const USER: User = createUser('USER');
 
+        beforeEach(() => {
+            userRepository.findUserByLogin = jest.fn((login: string): User => {
+                return null;
+            });
+        });
+
         it('should throw an error when providing no user', () => {
             expect(() => {
                 userService.createUser(null);
             }).toThrowError('Invalid user');
+        });
+
+        it('should call the user repository to check if the user already exists', () => {
+            userService.createUser(USER);
+
+            expect(userRepository.findUserByLogin).toHaveBeenCalledWith(USER.login);
+        });
+
+        it('should throw an error if the user already exists', () => {
+            userRepository.findUserByLogin = jest.fn((login: string): User => {
+                return USER;
+            });
+
+            expect(() => {
+                userService.createUser(USER);
+            }).toThrowError('User already exists');
         });
 
         it('should call the user repository to create the user', () => {

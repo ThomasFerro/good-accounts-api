@@ -1,4 +1,6 @@
 export class Transaction {
+    // TODO : Transaction constructor with any object as parameter
+
     transactionId: string;
     accountId: string;
     userId: string;
