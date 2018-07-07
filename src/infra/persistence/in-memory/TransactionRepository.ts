@@ -19,14 +19,15 @@ export class InMemoryTransactionRepository implements ITransactionRepository {
     }
 
     createTransaction(account: Account, transaction: Transaction): Transaction {
-        const createdTransaction: Transaction = new Transaction();
-        createdTransaction.accountId = account && account.accountId;
-        createdTransaction.amount = transaction.amount;
-        createdTransaction.date = transaction.date || new Date();
-        createdTransaction.description = transaction.description;
-        createdTransaction.name = transaction.name;
-        createdTransaction.userId = transaction.userId;
-        createdTransaction.transactionId = this.generateGuid();
+        const createdTransaction: Transaction = new Transaction({
+            accountId: account && account.accountId,
+            amount: transaction.amount,
+            date: transaction.date || new Date(),
+            description: transaction.description,
+            name: transaction.name,
+            userId: transaction.userId,
+            transactionId: this.generateGuid(),
+        });
 
         this.transactions.push(createdTransaction);
         return createdTransaction;

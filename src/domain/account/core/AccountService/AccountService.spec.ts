@@ -20,10 +20,11 @@ describe('AccountService', () => {
     const ACCOUNT_NAME = 'ACCOUNT_NAME';
 
     const createAccount = ({ accountId, accountName, users }) => {
-        const newAccount = new Account();
-        newAccount.accountId = accountId;
-        newAccount.name = accountName;
-        newAccount.users = users;
+        const newAccount = new Account({
+            accountId: accountId,
+            name: accountName,
+            users: users
+        });
         return newAccount;
     }
 
@@ -41,15 +42,17 @@ describe('AccountService', () => {
         })
 
         accountRepositoryMock.findAccountById = jest.fn((accountId) => {
-            const account = new Account();
-            account.accountId = accountId;
-            account.name = ACCOUNT_NAME;
-            const user = new User();
-            user.userId = USER_ID;
-            user.login = USER_LOGIN;
-            user.email = USER_EMAIL;
-            user.name = USER_NAME;
-            account.users = [ user ];
+            const user = new User({
+                userId: USER_ID,
+                login: USER_LOGIN,
+                email: USER_EMAIL,
+                name: USER_NAME,
+            });
+            const account = new Account({
+                accountId: accountId,
+                name: ACCOUNT_NAME,
+                users: [ user ],
+            });
             return account;
         })
 
@@ -196,19 +199,22 @@ describe('AccountService', () => {
         let accountCreator: User;
 
         beforeEach(() => {
-            newAccount = new Account();
-            newAccount.name = ACCOUNT_NAME;
+            newAccount = new Account({
+                name: ACCOUNT_NAME,
+            });
 
-            accountCreator = new User();
-            accountCreator.userId = USER_ID;
-            accountCreator.login = USER_LOGIN;
-            accountCreator.email = USER_EMAIL;
-            accountCreator.name = USER_NAME;
+            accountCreator = new User({
+                userId: USER_ID,
+                login: USER_LOGIN,
+                email: USER_EMAIL,
+                name: USER_NAME,
+            });
 
-            formattedNewAccount = new Account();
-            formattedNewAccount.name = ACCOUNT_NAME;
-            formattedNewAccount.creator = accountCreator;
-            formattedNewAccount.users = [ accountCreator ];
+            formattedNewAccount = new Account({
+                name: ACCOUNT_NAME,
+                creator: accountCreator,
+                users: [ accountCreator ],
+            });
 
             accountRepositoryMock.createAccount = jest.fn((account: Account): Account => {
                 return formattedNewAccount;
@@ -285,17 +291,19 @@ describe('AccountService', () => {
         let accountCreator: User;
 
         beforeEach(() => {
-            accountCreator = new User();
-            accountCreator.userId = USER_ID;
-            accountCreator.login = USER_LOGIN;
-            accountCreator.email = USER_EMAIL;
-            accountCreator.name = USER_NAME;
+            accountCreator = new User({
+                userId: USER_ID,
+                login: USER_LOGIN,
+                email: USER_EMAIL,
+                name: USER_NAME,
+            });
 
-            modifiedAccount = new Account();
-            modifiedAccount.accountId = ACCOUNT_ID;
-            modifiedAccount.name = ACCOUNT_NAME;
-            modifiedAccount.creator = accountCreator;
-            modifiedAccount.users = [ accountCreator ];
+            modifiedAccount = new Account({
+                accountId: ACCOUNT_ID,
+                name: ACCOUNT_NAME,
+                creator: accountCreator,
+                users: [ accountCreator ],
+            });
 
             accountRepositoryMock.updateAccount = jest.fn((updatedAccount: Account): Account => {
                 return updatedAccount;
@@ -379,8 +387,7 @@ describe('AccountService', () => {
 
         it('should throw an error if the updated account is invalid', () => {
             accountRepositoryMock.updateAccount = jest.fn((updatedAccount: Account): Account => {
-                const newAccount: Account = new Account();
-                return newAccount;
+                return new Account();
             });
 
             expect(() => {
@@ -427,11 +434,12 @@ describe('AccountService', () => {
                 const user = new User();
                 user.userId = USER_ID;
                 
-                const foundAccount = new Account();
-                foundAccount.accountId = ACCOUNT_ID;
-                foundAccount.name = ACCOUNT_NAME;
-                foundAccount.creator = randomUser;
-                foundAccount.users = [ randomUser, user ];
+                const foundAccount = new Account({
+                    accountId: ACCOUNT_ID,
+                    name: ACCOUNT_NAME,
+                    creator: randomUser,
+                    users: [ randomUser, user ],
+                });
 
                 return foundAccount;
             });

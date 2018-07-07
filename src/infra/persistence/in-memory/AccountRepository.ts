@@ -30,12 +30,13 @@ export class InMemoryAccountRepository implements IAccountRepository {
     }
 
     createAccount(account: Account): Account {
-        const createAccount: Account = new Account();
-        createAccount.name = account.name;
-        createAccount.transactions = account.transactions;
-        createAccount.users = account.users;
-        createAccount.creator = account.creator;
-        createAccount.accountId = this.generateGuid();
+        const createAccount: Account = new Account({
+            name: account.name,
+            transactions: account.transactions,
+            users: account.users,
+            creator: account.creator,
+            accountId: this.generateGuid(),
+        });
         this.accounts.push(createAccount);
         return createAccount;
     }

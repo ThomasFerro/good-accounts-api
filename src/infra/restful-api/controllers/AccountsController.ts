@@ -10,8 +10,7 @@ router.get('/', (req: GoodAccountsRequest, res: Response) => {
 });
 
 router.post('/', (req: GoodAccountsRequest, res: Response) => {
-    // TODO : req.body in Account constructor
-    res.send(accountService.createAccount(new Account(), req.user && req.user.userId));
+    res.send(accountService.createAccount(new Account(req.body), req.user && req.user.userId));
 });
 
 router.get('/:accountId', (req: GoodAccountsRequest, res: Response) => {
@@ -19,8 +18,7 @@ router.get('/:accountId', (req: GoodAccountsRequest, res: Response) => {
 });
 
 router.put('/:accountId', (req: GoodAccountsRequest, res: Response) => {
-    // TODO : req.body in Account constructor
-    res.send(accountService.modifyAccount(new Account(), req.user && req.user.userId));
+    res.send(accountService.modifyAccount(new Account(req.body), req.user && req.user.userId));
 });
 
 router.delete('/:accountId', (req: GoodAccountsRequest, res: Response) => {

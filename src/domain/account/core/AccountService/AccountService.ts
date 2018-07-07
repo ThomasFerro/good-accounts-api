@@ -68,10 +68,11 @@ export class AccountService implements IAccountService {
             throw new Error('Invalid account');
         }
 
-        const newAccount = new Account();
-        newAccount.name = account.name;
-        newAccount.creator = user;
-        newAccount.users = [ user ];
+        const newAccount = new Account({
+            name: account.name,
+            creator: user,
+            users: [ user ],
+        });
 
         const createAccount = this.accountRepository.createAccount(newAccount);
         

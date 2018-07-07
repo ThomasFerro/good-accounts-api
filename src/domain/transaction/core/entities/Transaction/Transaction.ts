@@ -1,5 +1,13 @@
 export class Transaction {
-    // TODO : Transaction constructor with any object as parameter
+    constructor(transaction?: any) {
+        this.transactionId = transaction && transaction.transactionId;
+        this.accountId = transaction && transaction.accountId;
+        this.userId = transaction && transaction.userId;
+        this.name = transaction && transaction.name;
+        this.description = transaction && transaction.description;
+        this.amount = transaction && transaction.amount;
+        this.date = transaction && transaction.date;
+    }
 
     transactionId: string;
     accountId: string;

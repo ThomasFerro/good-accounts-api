@@ -1,6 +1,7 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 
 import { GoodAccountsRequest } from '../utils/Request';
+import { GoodAccountsError } from '../utils/Error';
 
 import { EncryptionProvider } from '../../encryption/EncryptionProvider'
 import { User } from '../../../domain/user/core/entities/User/User';
@@ -17,6 +18,23 @@ export const authorizationMiddleware = (req: GoodAccountsRequest, res: Response,
         encryptionProvider.verifyToken(token)
             .then((user: User) => {
                 req.user = user;
+                next();
+            })
+            .catch(() => {
+                next();
             });
+    } else {
+        next();
     }
 }
+
+export const authorizationRequired = (req: GoodAccountsRequest, res: Response, next: NextFunction) => {
+    if (req.user) {
+        next();
+    } else {
+        next(new GoodAccountsError({
+            message: 'No authorized user provided',
+            errorCode: 401,
+        }));
+    }
+};
