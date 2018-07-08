@@ -14,6 +14,7 @@ export class InMemoryAccountRepository implements IAccountRepository {
         return this.accounts.filter((account: Account) => {
             return user &&
                 account &&
+                account.users &&
                 account.users.find((accountUser: User): boolean => {
                     return accountUser && accountUser.userId === user.userId;
                 });

@@ -12,6 +12,6 @@ router.use('/login', AuthenticationController)
 
 router.use('/accounts', authorizationRequired, AccountsController);
 router.use('/accounts/:accountId/transactions', authorizationRequired, TransactionsController);
-router.use('/users', authorizationRequired, UsersController);
+router.use('/users', UsersController);
 
 export const Routes: Router = router;

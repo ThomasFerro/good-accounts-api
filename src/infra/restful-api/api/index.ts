@@ -25,4 +25,4 @@ export const encryptionProvider = new EncryptionProvider();
 export const authenticationService: IAuthenticationService = new AuthenticationService(userRepository, encryptionProvider);
 export const accountService: IAccountService = new AccountService(accountRepository, userRepository);
 export const transactionService: ITransactionService = new TransactionService(transactionRepository, accountService);
-export const userService: IUserService = new UserService(userRepository);
+export const userService: IUserService = new UserService(encryptionProvider, userRepository);

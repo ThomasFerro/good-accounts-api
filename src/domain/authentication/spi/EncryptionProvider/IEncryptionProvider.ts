@@ -8,4 +8,7 @@ export interface IEncryptionProvider {
     createToken(user: User): Promise<string>;
 
     comparePassword(passwordToCompare: string, user: User): Promise<string>;
+
+    // TODO: Return Promise<string>
+    hashPassword(password: string): string;
 };

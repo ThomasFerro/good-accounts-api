@@ -1,3 +1,6 @@
+import { IEncryptionProvider } from '../../../authentication/spi/EncryptionProvider/IEncryptionProvider';
+import { EncryptionProviderMock } from '../../../authentication/spi/EncryptionProvider/__mock__/EncryptionProviderMock';
+
 import { IUserService } from '../../api/UserService/IUserService';
 import { UserService } from './UserSerivce';
 import { IUserRepository } from '../../spi/UserRepository/IUserRepository';
@@ -6,6 +9,7 @@ import { UserRepositoryMock } from '../../spi/UserRepository/__mock__/UserReposi
 import { User } from '../entities/User/User';
 
 describe('UserService', () => {
+    let encryptionProvider: IEncryptionProvider;
     let userService: IUserService;
     let userRepository: IUserRepository;
 
@@ -13,18 +17,21 @@ describe('UserService', () => {
     const USER_LOGIN = 'USER_LOGIN';
     const USER_NAME = 'USER_NAME';
     const USER_EMAIL = 'USER_EMAIL';
+    const USER_PASSWORD = 'USER_PASSWORD';
     const createUser = (userName: string): User => {
         const user = new User();
         user.userId = USER_ID;
         user.login = USER_LOGIN;
         user.name = USER_NAME || userName;
         user.email = USER_EMAIL;
+        user.password = USER_PASSWORD; 
         return user;
     };
 
     beforeEach(() => {
+        encryptionProvider = new EncryptionProviderMock();
         userRepository = new UserRepositoryMock();
-        userService = new UserService(userRepository);
+        userService = new UserService(encryptionProvider, userRepository);
     });
 
     describe('search user', () => {
@@ -69,10 +76,15 @@ describe('UserService', () => {
 
     describe('create user', () => {
         const USER: User = createUser('USER');
+        const HASHED_PASSWORD: string = 'HASHED_PASSWORD';
 
         beforeEach(() => {
             userRepository.findUserByLogin = jest.fn((login: string): User => {
                 return null;
+            });
+
+            encryptionProvider.hashPassword = jest.fn((password: string): string => {
+                return HASHED_PASSWORD;
             });
         });
 
@@ -98,6 +110,31 @@ describe('UserService', () => {
             }).toThrowError('User already exists');
         });
 
+        it('should call the encryption provider to hash the password', () => {
+            userService.createUser(USER);
+
+            expect(encryptionProvider.hashPassword).toHaveBeenCalledWith(USER.password);
+        });
+
+        it('should throw an error if the hash fails', () => {
+            const HASH_FAILS_ERROR = 'HASH_FAILS_ERROR';
+
+            encryptionProvider.hashPassword = jest.fn((password: string): string => {
+                throw new Error(HASH_FAILS_ERROR);
+            });
+
+
+            expect(() => {
+                userService.createUser(USER);
+            }).toThrowError(HASH_FAILS_ERROR);
+        });
+
+        it('should replace the password with the hashed one', () => {
+            userService.createUser(USER);
+
+            expect(USER.password).toBe(HASHED_PASSWORD);
+        });
+
         it('should call the user repository to create the user', () => {
             userService.createUser(USER);
 
@@ -115,14 +152,14 @@ describe('UserService', () => {
             }).toThrowError(USER_CREATION_ERROR);
         });
         
-        it('should return the created users', () => {
+        it('should return the created users\' info ', () => {
             const CREATED_USER = createUser(USER.name);
             CREATED_USER.userId = 'USER_ID';
             userRepository.createUser = jest.fn((user: User): User => {
                 return CREATED_USER;
             });
 
-            expect(userService.createUser(USER)).toBe(CREATED_USER);
+            expect(userService.createUser(USER)).toEqual(CREATED_USER.userInfo());
         });
     });
 
