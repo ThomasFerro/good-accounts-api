@@ -15,7 +15,7 @@ export class AccountService implements IAccountService {
         this.userRepository = userRepository;
     }
 
-    getUser(userId: string): User {
+    private getUser(userId: string): User {
         if (!userId) {
             throw new Error('Invalid user id');
         }
@@ -25,18 +25,10 @@ export class AccountService implements IAccountService {
             throw new Error('User not found');
         }
 
-        return user;
+        return user && user.userInfo();
     }
 
-    getAllUserAccounts(userId: string): Array<Account> {
-        const user = this.getUser(userId);
-
-        return this.accountRepository.findUserAccounts(user);
-    }
-
-    getAccount(accountId: string, userId: string): Account {
-        const user = this.getUser(userId);
-
+    private getAccountById(accountId: string): Account {
         if (!accountId) {
             throw new Error('Invalid account id');
         }
@@ -50,6 +42,20 @@ export class AccountService implements IAccountService {
         if (!account.isValid()) {
             throw new Error('Invalid account');
         }
+
+        return account;
+    };
+
+    getAllUserAccounts(userId: string): Array<Account> {
+        const user = this.getUser(userId);
+
+        return this.accountRepository.findUserAccounts(user);
+    }
+
+    getAccount(accountId: string, userId: string): Account {
+        const user = this.getUser(userId);
+
+        const account = this.getAccountById(accountId);
 
         if (!account.users ||
             !account.users.find((user) => {
@@ -68,10 +74,11 @@ export class AccountService implements IAccountService {
             throw new Error('Invalid account');
         }
 
-        const newAccount = new Account();
-        newAccount.name = account.name;
-        newAccount.creator = user;
-        newAccount.users = [ user ];
+        const newAccount = new Account({
+            name: account.name,
+            creator: user,
+            users: [ user ],
+        });
 
         const createAccount = this.accountRepository.createAccount(newAccount);
         

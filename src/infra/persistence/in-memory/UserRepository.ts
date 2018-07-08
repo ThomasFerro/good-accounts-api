@@ -47,13 +47,13 @@ export class InMemoryUserRepository implements IUserRepository {
     };
 
     createUser(user: User): User {
-        const createdUser = new User();
-        createdUser.name = user.name;
-        createdUser.login = user.login;
-        createdUser.email = user.email;
+        const createdUser = new User(user);
         createdUser.userId = this.generateGuid();
-        this.users.push(createdUser);
-        return createdUser;
+        if (!this.findUserByLogin(createdUser.login)) {
+            this.users.push(createdUser);
+            return createdUser;
+        }
+        return null;
     };
 
     deleteUser(userId: string): boolean {

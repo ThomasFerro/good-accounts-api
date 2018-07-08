@@ -32,7 +32,7 @@ export class EncryptionProvider implements IEncryptionProvider {
             try {
                 return jsonwebtoken.sign(user.userInfo(), this.jwtKey);
             } catch (e) {
-                reject('An error has occurred while creating the JWT' + e && e.toString());
+                reject('An error has occurred while creating the JWT: ' + e && e.toString());
             }
         });
     }
@@ -48,8 +48,18 @@ export class EncryptionProvider implements IEncryptionProvider {
                     }
                 });
             } catch (e) {
-                reject('An error has occured while comparing the passwords' + e && e.toString());
+                reject('An error has occured while comparing the passwords: ' + e && e.toString());
             }
         });
+    };
+
+    // TODO: Return Promise<string>
+    hashPassword(password: string): string {
+        try {
+            // TODO: Use the async method
+            return bcrypt.hashSync(password, 12);
+        } catch (e) {
+            throw new Error ('An error has occurred while hashing the password: ' + e && e.toString());
+        }
     };
 }

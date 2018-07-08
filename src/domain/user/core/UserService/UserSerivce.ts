@@ -2,12 +2,16 @@ import { IUserService } from '../../api/UserService/IUserService';
 
 import { IUserRepository } from '../../spi/UserRepository/IUserRepository';
 
+import { IEncryptionProvider } from '../../../authentication/spi/EncryptionProvider/IEncryptionProvider';
+
 import { User } from '../entities/User/User';
 
 export class UserService implements IUserService {
+    private encryptionProvider: IEncryptionProvider;
     private userRepository: IUserRepository;
 
-    constructor(userRepository: IUserRepository) {
+    constructor(encryptionProvider: IEncryptionProvider, userRepository: IUserRepository) {
+        this.encryptionProvider = encryptionProvider;
         this.userRepository = userRepository;
     };
 
@@ -24,7 +28,14 @@ export class UserService implements IUserService {
             throw new Error('Invalid user');
         }
 
-        return this.userRepository.createUser(user);
+        if (this.userRepository.findUserByLogin(user.login)) {
+            throw new Error('User already exists');
+        }
+
+        user.password = this.encryptionProvider.hashPassword(user.password);
+
+        const createdUser: User = this.userRepository.createUser(user);
+        return createdUser && createdUser.userInfo();
     };
 
     removeUser(userId: string): boolean {

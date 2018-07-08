@@ -11,12 +11,13 @@ describe('Transaction entity', () => {
         const TRANSACTION_DATE: Date = new Date();
 
         beforeEach(() => {
-            transaction = new Transaction();
-            transaction.accountId = ACCOUNT_ID;
-            transaction.userId = USER_ID;
-            transaction.name = TRANSACTION_NAME;
-            transaction.amount = TRANSACTION_AMOUNT;
-            transaction.date = TRANSACTION_DATE;
+            transaction = new Transaction({
+                accountId: ACCOUNT_ID,
+                userId: USER_ID,
+                name: TRANSACTION_NAME,
+                amount: TRANSACTION_AMOUNT,
+                date: TRANSACTION_DATE
+            });
         });
 
         test('should be invalid when providing no account id', () => {

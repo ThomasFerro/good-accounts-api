@@ -1,0 +1,307 @@
+{
+	"info": {
+		"_postman_id": "b0963f7d-971a-433b-ac58-83a46a6b8a08",
+		"name": "Good Accounts",
+		"description": "Good Accounts' API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"description": "",
+			"item": [
+				{
+					"name": "Create user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b093f964-928b-49d9-b12f-bbff8f7f97ee",
+								"type": "text/javascript",
+								"exec": [
+									"const createdUser = pm.response.json()",
+									"pm.environment.set(\"last_created_user_id\", createdUser && createdUser.userId);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"login\": \"ThomasFerro\",\n\t\"name\": \"Thomas Ferro\",\n\t\"password\": \"password\",\n\t\"email\": \"t.ferro184@gmail.com\"\n}"
+						},
+						"url": {
+							"raw": "{{api_url}}/{{api_version}}/users",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Accounts",
+			"description": "",
+			"item": [
+				{
+					"name": "Get all user's accounts",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT {{access_token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{api_url}}/{{api_version}}/accounts",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"accounts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get account",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT {{access_token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{api_url}}/{{api_version}}/accounts/{{last_created_account_id}}",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"accounts",
+								"{{last_created_account_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create account",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "805ed9b6-d1b1-4009-ad11-0b46e6ad2b0c",
+								"type": "text/javascript",
+								"exec": [
+									"const createdAccount = pm.response.json()",
+									"pm.environment.set(\"last_created_account_id\", createdAccount && createdAccount.accountId);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Account\"\n}"
+						},
+						"url": {
+							"raw": "{{api_url}}/{{api_version}}/accounts",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"accounts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Modify account",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"accountId\": \"{{last_created_account_id}}\",\n\t\"name\": \"Account new name\",\n\t\"creator\": {\n\t\t\"userId\": \"{{last_created_user_id}}\"\n\t},\n\t\"users\": [\n\t\t{\n\t\t\t\"userId\": \"{{last_created_user_id}}\"\n\t\t}\n\t]\n}"
+						},
+						"url": {
+							"raw": "{{api_url}}/{{api_version}}/accounts/{{last_created_account_id}}",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"accounts",
+								"{{last_created_account_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete account",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{api_url}}/{{api_version}}/accounts/{{last_created_account_id}}",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"accounts",
+								"{{last_created_account_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Transactions",
+			"description": "",
+			"item": [
+				{
+					"name": "Create transaction",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"accountId\": \"{{last_created_account_id}}\",\n\t\"userId\": \"{{last_created_user_id}}\",\n\t\"name\": \"Transaction name\",\n\t\"amount\": 42.4,\n\t\"date\": \"2018-07-08T16:21:33.178Z\"\n}"
+						},
+						"url": {
+							"raw": "{{api_url}}/{{api_version}}/accounts/{{last_created_account_id}}/transactions",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"accounts",
+								"{{last_created_account_id}}",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authentication",
+			"description": "",
+			"item": [
+				{
+					"name": "Generate JWT",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fde61f67-fa97-41f4-aba1-2e94158ed6c5",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"access_token\", pm.response.text());"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "",
+								"value": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"ThomasFerro\",\n\t\"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{api_url}}/{{api_version}}/login",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

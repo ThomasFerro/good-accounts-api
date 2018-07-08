@@ -33,14 +33,14 @@ describe('TransactionService', () => {
     let ACCOUNT_TRANSACTIONS: Array<Transaction>;
 
     const createTransaction = (name: string, amount?: number, description?: string, date?: Date): Transaction => {
-        const newTransaction = new Transaction();
-
-        newTransaction.accountId = ACCOUNT_ID;
-        newTransaction.userId = USER_ID;
-        newTransaction.name = name || TRANSACTION_NAME;
-        newTransaction.amount = amount || 42;
-        newTransaction.description = description || TRANSACTION_DESCRIPTION;
-        newTransaction.date = date || TRANSACTION_DATE;
+        const newTransaction = new Transaction({
+            accountId: ACCOUNT_ID,
+            userId: USER_ID,
+            name: name || TRANSACTION_NAME,
+            amount: amount || 42,
+            description: description || TRANSACTION_DESCRIPTION,
+            date: date || TRANSACTION_DATE,
+        });
 
         return newTransaction;
     };
@@ -52,10 +52,11 @@ describe('TransactionService', () => {
         USER.email = USER_EMAIL;
         USER.name = USER_NAME;
 
-        ACCOUNT = new Account();
-        ACCOUNT.accountId = ACCOUNT_ID;
-        ACCOUNT.creator = USER;
-        ACCOUNT.users = [ USER ];
+        ACCOUNT = new Account({
+            accountId: ACCOUNT_ID,
+            creator: USER,
+            users: [ USER ],
+        });
         
         ACCOUNT_TRANSACTIONS = [
             createTransaction('TRANSACTION_01'),

@@ -9,14 +9,19 @@ export class EncryptionProviderMock implements IEncryptionProvider {
     };
 
     verifyToken = jest.fn((token: string): Promise<User> => {
-        return null
+        return null;
     });
 
     createToken = jest.fn((user: User): Promise<string> => {
-        return null
+        return null;
     });
 
     comparePassword = jest.fn((passwordToCompare: string, user: User): Promise<string> => {
-        return null
+        return null;
+    });
+
+    // TODO: Return Promise<string>
+    hashPassword = jest.fn((password: string): string => {
+        return null;
     });
 }
