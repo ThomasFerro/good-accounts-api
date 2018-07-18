@@ -53,8 +53,7 @@ export class EncryptionProvider implements IEncryptionProvider {
         });
     };
 
-    // TODO: Return Promise<string>
-    hashPassword(password: string): string {
+    async hashPassword(password: string): Promise<string> {
         try {
             // TODO: Use the async method
             return bcrypt.hashSync(password, 12);

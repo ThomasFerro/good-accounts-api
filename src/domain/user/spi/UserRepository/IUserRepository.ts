@@ -1,13 +1,13 @@
 import { User } from '../../core/entities/User/User';
 
 export interface IUserRepository {
-    findUserById(userId: string): User;
+    findUserById(userId: string): Promise<User>;
 
-    findUserByLogin(login: string): User;
+    findUserByLogin(login: string): Promise<User>;
 
-    searchUsers(query: string): Array<User>;
+    searchUsers(query: string): Promise<Array<User>>;
 
-    createUser(user: User): User;
+    createUser(user: User): Promise<User>;
 
-    deleteUser(userId: string): boolean;
+    deleteUser(userId: string): Promise<boolean>;
 };

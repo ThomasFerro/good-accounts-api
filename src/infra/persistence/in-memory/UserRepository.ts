@@ -10,7 +10,7 @@ export class InMemoryUserRepository implements IUserRepository {
         this.users = [];
     };
     
-    findUserById(userId: string): User {
+    async findUserById(userId: string): Promise<User> {
         if (!userId) {
             throw new Error('Invalid user id');
         }
@@ -21,12 +21,10 @@ export class InMemoryUserRepository implements IUserRepository {
         });
     };
 
-    findUserByLogin(login: string): User {
+    async findUserByLogin(login: string): Promise<User> {
         if (!login) {
             throw new Error('Invalid login');
         }
-
-        
 
         return this.users.find((user: User) => {
             return user &&
@@ -34,7 +32,7 @@ export class InMemoryUserRepository implements IUserRepository {
         });
     };
 
-    searchUsers(query: string): Array<User> {
+    async searchUsers(query: string): Promise<Array<User>> {
         if (!query) {
             return [];
         }
@@ -46,17 +44,17 @@ export class InMemoryUserRepository implements IUserRepository {
         });
     };
 
-    createUser(user: User): User {
+    async createUser(user: User): Promise<User> {
         const createdUser = new User(user);
         createdUser.userId = this.generateGuid();
-        if (!this.findUserByLogin(createdUser.login)) {
+        if (!await this.findUserByLogin(createdUser.login)) {
             this.users.push(createdUser);
             return createdUser;
         }
         return null;
     };
 
-    deleteUser(userId: string): boolean {
+    async deleteUser(userId: string): Promise<boolean> {
         let success: boolean = false;
         const userIndex = this.users.findIndex((user: User): boolean => {
             return user && user.userId === userId;

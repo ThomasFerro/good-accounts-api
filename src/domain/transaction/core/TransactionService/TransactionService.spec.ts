@@ -74,51 +74,47 @@ describe('TransactionService', () => {
     });
 
     describe('get account transactions', () => {
-        it('should throw an error when providing no account id', () => {
-            expect(() => {
-                transactionService.getAccountTransactions('', USER_ID);
-            }).toThrowError('Invalid account id');
+        it('should throw an error when providing no account id', async () => {
+            await expect(transactionService.getAccountTransactions('', USER_ID))
+                .rejects.toEqual(Error('Invalid account id'));
         });
 
-        it('should throw an error when providing no user id', () => {
-            expect(() => {
-                transactionService.getAccountTransactions(ACCOUNT_ID, '');
-            }).toThrowError('Invalid user id');
+        it('should throw an error when providing no user id', async () => {
+            await expect(transactionService.getAccountTransactions(ACCOUNT_ID, ''))
+                .rejects.toEqual(Error('Invalid user id'));
         });
 
-        it('should call the account repository to get the requested account', () => {
-            transactionService.getAccountTransactions(ACCOUNT_ID, USER_ID);
+        it('should call the account repository to get the requested account', async () => {
+            await transactionService.getAccountTransactions(ACCOUNT_ID, USER_ID);
 
             expect(accountServiceMock.getAccount).toHaveBeenCalledWith(ACCOUNT_ID, USER_ID);
         });
 
-        it('should throw an error if the account fetching fails', () => {
+        it('should throw an error if the account fetching fails', async () => {
             const GET_ACCOUNT_ERROR = 'GET_ACCOUNT_ERROR';
 
             accountServiceMock.getAccount = jest.fn((accountId: string, userId: string): Account => {
                 throw new Error(GET_ACCOUNT_ERROR);
             });
 
-            expect(() => {
-                transactionService.getAccountTransactions(ACCOUNT_ID, USER_ID);
-            }).toThrowError(GET_ACCOUNT_ERROR);
+            await expect(transactionService.getAccountTransactions(ACCOUNT_ID, USER_ID))
+                .rejects.toEqual(Error(GET_ACCOUNT_ERROR));
         });
 
-        it('should call the transaction repository to find the account\'s transactions', () => {
-            transactionService.getAccountTransactions(ACCOUNT_ID, USER_ID);
+        it('should call the transaction repository to find the account\'s transactions', async () => {
+            await transactionService.getAccountTransactions(ACCOUNT_ID, USER_ID);
 
             expect(transactionRepositoryMock.findAllAccountsTransactions).toHaveBeenCalledWith(ACCOUNT);
         });
 
-        it('should throw an error if the search for transactions fails', () => {
+        it('should throw an error if the search for transactions fails', async () => {
             const TRANSACTION_SEARCH_FAILS = 'TRANSACTION_SEARCH_FAILS';
             transactionRepositoryMock.findAllAccountsTransactions = jest.fn((account: Account): Array<Transaction> => {
                 throw new Error(TRANSACTION_SEARCH_FAILS);
             });
             
-            expect(() => {
-                transactionService.getAccountTransactions(ACCOUNT_ID, USER_ID);
-            }).toThrowError(TRANSACTION_SEARCH_FAILS);
+            await expect(transactionService.getAccountTransactions(ACCOUNT_ID, USER_ID))
+                .rejects.toEqual(Error(TRANSACTION_SEARCH_FAILS));
         });
 
         it('should returns the account\'s transactions', () => {
@@ -126,7 +122,7 @@ describe('TransactionService', () => {
                 return ACCOUNT_TRANSACTIONS;
             });
 
-            expect(transactionService.getAccountTransactions(ACCOUNT_ID, USER_ID)).toBe(ACCOUNT_TRANSACTIONS);
+            expect(transactionService.getAccountTransactions(ACCOUNT_ID, USER_ID)).resolves.toBe(ACCOUNT_TRANSACTIONS);
         });
     });
 
@@ -146,63 +142,59 @@ describe('TransactionService', () => {
             });
         });
 
-        it('should throw an error when providing no account id', () => {
-            expect(() => {
-                transactionService.addTransactionToAccount('', NEW_TRANSACTION, USER_ID);
-            }).toThrowError('Invalid account id');
+        it('should throw an error when providing no account id', async () => {
+            await expect(transactionService.addTransactionToAccount('', NEW_TRANSACTION, USER_ID))
+                .rejects.toEqual(Error('Invalid account id'));
         });
 
-        it('should throw an error when providing no user id', () => {
-            expect(() => {
-                transactionService.addTransactionToAccount(ACCOUNT_ID, NEW_TRANSACTION, '');
-            }).toThrowError('Invalid user id');
+        it('should throw an error when providing no user id', async () => {
+            await expect(transactionService.addTransactionToAccount(ACCOUNT_ID, NEW_TRANSACTION, ''))
+                .rejects.toEqual(Error('Invalid user id'));
         });
 
-        it('should throw an error when providing an invalid transaction', () => {
-            expect(() => {
-                NEW_TRANSACTION.name = null;
-                transactionService.addTransactionToAccount(ACCOUNT_ID, NEW_TRANSACTION, USER_ID);
-            }).toThrowError('Invalid transaction');
+        it('should throw an error when providing an invalid transaction', async () => {
+            NEW_TRANSACTION.name = null;
+            await expect(transactionService.addTransactionToAccount(ACCOUNT_ID, NEW_TRANSACTION, USER_ID))
+                .rejects.toEqual(Error('Invalid transaction'));
         });
 
-        it('should call the account repository to get the requested account', () => {
-            transactionService.addTransactionToAccount(ACCOUNT_ID, NEW_TRANSACTION, USER_ID);
+        it('should call the account repository to get the requested account', async () => {
+            await transactionService.addTransactionToAccount(ACCOUNT_ID, NEW_TRANSACTION, USER_ID);
 
             expect(accountServiceMock.getAccount).toHaveBeenCalledWith(ACCOUNT_ID, USER_ID);
         });
 
-        it('should throw an error if the account fetching fails', () => {
+        it('should throw an error if the account fetching fails', async () => {
             const GET_ACCOUNT_ERROR = 'GET_ACCOUNT_ERROR';
 
             accountServiceMock.getAccount = jest.fn((accountId: string, userId: string): Account => {
                 throw new Error(GET_ACCOUNT_ERROR);
             });
 
-            expect(() => {
-                transactionService.addTransactionToAccount(ACCOUNT_ID, NEW_TRANSACTION, USER_ID);
-            }).toThrowError(GET_ACCOUNT_ERROR);
+            await expect(transactionService.addTransactionToAccount(ACCOUNT_ID, NEW_TRANSACTION, USER_ID))
+                .rejects.toEqual(Error(GET_ACCOUNT_ERROR));
         });
 
-        it('shoul call the transaction repository to create the transaction', () => {
-            transactionService.addTransactionToAccount(ACCOUNT_ID, NEW_TRANSACTION, USER_ID);
+        it('shoul call the transaction repository to create the transaction', async () => {
+            await transactionService.addTransactionToAccount(ACCOUNT_ID, NEW_TRANSACTION, USER_ID);
 
             expect(transactionRepositoryMock.createTransaction).toHaveBeenCalledWith(ACCOUNT, NEW_TRANSACTION);
         });
 
-        it('should throw an error if the transaction creation fails', () => {
+        it('should throw an error if the transaction creation fails', async () => {
             const TRANSACTION_CREATION_ERROR = 'TRANSACTION_CREATION_ERROR';
 
             transactionRepositoryMock.createTransaction = jest.fn((account: Account, transaction: Transaction): Transaction =>  {
                 throw new Error(TRANSACTION_CREATION_ERROR);
             });
 
-            expect(() => {
-                transactionService.addTransactionToAccount(ACCOUNT_ID, NEW_TRANSACTION, USER_ID);
-            }).toThrowError(TRANSACTION_CREATION_ERROR);
+            await expect(transactionService.addTransactionToAccount(ACCOUNT_ID, NEW_TRANSACTION, USER_ID))
+                .rejects.toEqual(Error(TRANSACTION_CREATION_ERROR));
         });
 
         it('should return the created transaction if everything succeeds', () => {
-            expect(transactionService.addTransactionToAccount(ACCOUNT_ID, NEW_TRANSACTION, USER_ID)).toBe(CREATED_TRANSACTION);
+            expect(transactionService.addTransactionToAccount(ACCOUNT_ID, NEW_TRANSACTION, USER_ID))
+                .resolves.toBe(CREATED_TRANSACTION);
         });
     });
 
@@ -213,44 +205,40 @@ describe('TransactionService', () => {
             });
         });
         
-        it('should throw an error when providing no account id', () => {
-            expect(() => {
-                transactionService.removeTransactionFromAccount('', TRANSACTION_ID, USER_ID);
-            }).toThrowError('Invalid account id');
+        it('should throw an error when providing no account id', async () => {
+            await expect(transactionService.removeTransactionFromAccount('', TRANSACTION_ID, USER_ID))
+                .rejects.toEqual(Error('Invalid account id'));
         });
 
-        it('should throw an error when providing no user id', () => {
-            expect(() => {
-                transactionService.removeTransactionFromAccount(ACCOUNT_ID, TRANSACTION_ID, '');
-            }).toThrowError('Invalid user id');
+        it('should throw an error when providing no user id', async () => {
+            await expect(transactionService.removeTransactionFromAccount(ACCOUNT_ID, TRANSACTION_ID, ''))
+                .rejects.toEqual(Error('Invalid user id'));
         });
 
-        it('should throw an error when providing no transaction id', () => {
-            expect(() => {
-                transactionService.removeTransactionFromAccount(ACCOUNT_ID, '', USER_ID);
-            }).toThrowError('Invalid transaction id');
+        it('should throw an error when providing no transaction id', async () => {
+            await expect(transactionService.removeTransactionFromAccount(ACCOUNT_ID, '', USER_ID))
+                .rejects.toEqual(Error('Invalid transaction id'));
         });
 
-        it('should call the transaction repository to remove the transaction', () => {
-            transactionService.removeTransactionFromAccount(ACCOUNT_ID, TRANSACTION_ID, USER_ID);
+        it('should call the transaction repository to remove the transaction', async () => {
+            await transactionService.removeTransactionFromAccount(ACCOUNT_ID, TRANSACTION_ID, USER_ID);
 
             expect(transactionRepositoryMock.deleteTransaction).toHaveBeenCalledWith(ACCOUNT, TRANSACTION_ID);
         });
 
-        it('should throw an error if the transaction removal fails', () => {
+        it('should throw an error if the transaction removal fails', async () => {
             const TRANSACTION_REMOVAL_ERROR = 'TRANSACTION_REMOVAL_ERROR';
 
             transactionRepositoryMock.deleteTransaction = jest.fn((account: Account, transactionId: string): boolean =>  {
                 throw new Error(TRANSACTION_REMOVAL_ERROR);
             });
 
-            expect(() => {
-                transactionService.removeTransactionFromAccount(ACCOUNT_ID, TRANSACTION_ID, USER_ID);
-            }).toThrowError(TRANSACTION_REMOVAL_ERROR);
+            await expect(transactionService.removeTransactionFromAccount(ACCOUNT_ID, TRANSACTION_ID, USER_ID))
+                .rejects.toEqual(Error(TRANSACTION_REMOVAL_ERROR));
         });
 
-        it('should return true if the transaction removal succeeds', () => {
-            expect(transactionService.removeTransactionFromAccount(ACCOUNT_ID, TRANSACTION_ID, USER_ID)).toBe(true);
+        it('should return true if the transaction removal succeeds', async () => {
+            expect(transactionService.removeTransactionFromAccount(ACCOUNT_ID, TRANSACTION_ID, USER_ID)).resolves.toBe(true);
         });
     });
 });

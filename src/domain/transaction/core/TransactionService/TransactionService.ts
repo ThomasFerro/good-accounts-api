@@ -15,7 +15,7 @@ export class TransactionService implements ITransactionService {
         this.accountService = accountService;
     }
 
-    private getAccount(accountId: string, userId: string): Account {
+    private async getAccount(accountId: string, userId: string): Promise<Account> {
         if (!accountId) {
             throw new Error('Invalid account id');
         }
@@ -24,31 +24,31 @@ export class TransactionService implements ITransactionService {
             throw new Error('Invalid user id');
         }
 
-        return this.accountService.getAccount(accountId, userId);
+        return await this.accountService.getAccount(accountId, userId);
     }
 
-    getAccountTransactions(accountId: string, userId: string): Array<Transaction> {
-        const account = this.getAccount(accountId, userId);
+    async getAccountTransactions(accountId: string, userId: string): Promise<Array<Transaction>> {
+        const account = await this.getAccount(accountId, userId);
         
         return this.transactionRepository.findAllAccountsTransactions(account);
     };
 
-    addTransactionToAccount(accountId: string, transaction: Transaction, userId: string): Transaction {
+    async addTransactionToAccount(accountId: string, transaction: Transaction, userId: string): Promise<Transaction> {
         if (!transaction || !transaction.isValid()) {
             throw new Error('Invalid transaction');
         }
         
-        const account = this.getAccount(accountId, userId);
+        const account = await this.getAccount(accountId, userId);
 
         return this.transactionRepository.createTransaction(account, transaction);
     };
 
-    removeTransactionFromAccount(accountId: string, transactionId: string, userId: string): boolean {
+    async removeTransactionFromAccount(accountId: string, transactionId: string, userId: string): Promise<boolean> {
         if (!transactionId) {
             throw new Error('Invalid transaction id');
         }
         
-        const account = this.getAccount(accountId, userId);
+        const account = await this.getAccount(accountId, userId);
         
         return this.transactionRepository.deleteTransaction(account, transactionId);
     };

@@ -26,24 +26,20 @@ export class AuthenticationService implements IAuthenticationService {
         });
     };
 
-    generateToken(username: string, password: string): Promise<string> {
-        return new Promise((resolve, reject) => {
-            if (!username) {
-                reject('Invalid user name');
-            } else if (!password) {
-                reject('Invalid password');
-            } else {
+    async generateToken(username: string, password: string): Promise<string> {
+        if (!username) {
+            throw Error('Invalid user name');
+        } 
+        if (!password) {
+            throw Error('Invalid password');
+        } 
+        
+        const user = await this.userRepository.findUserByLogin(username);
+        
+        if (!user || !user.isValid()) {
+            throw Error('User not found');
+        }
 
-                const user = this.userRepository.findUserByLogin(username);
-                
-                if (!user || !user.isValid()) {
-                    reject('User not found');
-                }
-
-                this.encryptionProvider.comparePassword(password, user)
-                    .then(resolve)
-                    .catch(reject);
-            }
-        });
+        return this.encryptionProvider.comparePassword(password, user);
     };
 };

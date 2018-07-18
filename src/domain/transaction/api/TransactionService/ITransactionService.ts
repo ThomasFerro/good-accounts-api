@@ -1,9 +1,9 @@
 import { Transaction } from "../../core/entities/Transaction/Transaction";
 
 export interface ITransactionService {
-    getAccountTransactions(accountId: string, userId: string): Array<Transaction>;
+    getAccountTransactions(accountId: string, userId: string): Promise<Array<Transaction>>;
 
-    addTransactionToAccount(accountId: string, transaction: Transaction, userId: string): Transaction;
+    addTransactionToAccount(accountId: string, transaction: Transaction, userId: string): Promise<Transaction>;
 
-    removeTransactionFromAccount(accountId: string, transactionId: string, userId: string): boolean;
+    removeTransactionFromAccount(accountId: string, transactionId: string, userId: string): Promise<boolean>;
 };
