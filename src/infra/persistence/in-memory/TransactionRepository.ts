@@ -10,7 +10,7 @@ export class InMemoryTransactionRepository implements ITransactionRepository {
         this.transactions = [];
     }
 
-    findAllAccountsTransactions(account: Account): Array<Transaction> {
+    async findAllAccountsTransactions(account: Account): Promise<Array<Transaction>> {
         return this.transactions.filter((transaction: Transaction) => {
             return account &&
                 transaction &&
@@ -18,7 +18,7 @@ export class InMemoryTransactionRepository implements ITransactionRepository {
         });
     }
 
-    createTransaction(account: Account, transaction: Transaction): Transaction {
+    async createTransaction(account: Account, transaction: Transaction): Promise<Transaction> {
         const createdTransaction: Transaction = new Transaction({
             accountId: account && account.accountId,
             amount: transaction.amount,
@@ -33,7 +33,7 @@ export class InMemoryTransactionRepository implements ITransactionRepository {
         return createdTransaction;
     }
 
-    deleteTransaction(account: Account, transactionId: string): boolean {
+    async deleteTransaction(account: Account, transactionId: string): Promise<boolean> {
         let success: boolean = false;
         const transactionIndex = this.transactions.findIndex((transaction: Transaction): boolean => {
             return transaction && transaction.transactionId === transactionId;

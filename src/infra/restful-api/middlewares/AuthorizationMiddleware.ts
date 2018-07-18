@@ -6,7 +6,7 @@ import { GoodAccountsError } from '../utils/Error';
 import { EncryptionProvider } from '../../encryption/EncryptionProvider'
 import { User } from '../../../domain/user/core/entities/User/User';
 
-export const authorizationMiddleware = (req: GoodAccountsRequest, res: Response, next: NextFunction) => {
+export const authorizationMiddleware = async (req: GoodAccountsRequest, res: Response, next: NextFunction) => {
     // Check if the authorization header is set
     if (req.headers && req.headers.authorization &&
         req.headers.authorization.split(' ')[0] === 'JWT') {
@@ -15,14 +15,16 @@ export const authorizationMiddleware = (req: GoodAccountsRequest, res: Response,
 
         const encryptionProvider = new EncryptionProvider();
 
-        encryptionProvider.verifyToken(token)
-            .then((user: User) => {
-                req.user = user;
-                next();
-            })
-            .catch(() => {
-                next();
-            });
+        try {
+            const user: User = await encryptionProvider.verifyToken(token);
+            req.user = user;
+            next();
+        } catch (e) {
+            next(new GoodAccountsError({
+                error: 'Token verification error',
+                message: e,
+            }));
+        }
     } else {
         next();
     }

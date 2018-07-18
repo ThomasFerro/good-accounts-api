@@ -60,39 +60,37 @@ describe('AccountService', () => {
     });
 
     describe('get user accounts', () => {
-        it('should throw an error when providing no user', () => {
-            expect(() => {
-                accountService.getAllUserAccounts('');
-            }).toThrowError('Invalid user id');
+        it('should throw an error when providing no user', async () => {
+            await expect(accountService.getAllUserAccounts(''))
+                .rejects.toEqual(Error('Invalid user id'));
         });
 
-        it('should call the user repository to find the requested user', () => {
-            accountService.getAllUserAccounts(USER_ID);
+        it('should call the user repository to find the requested user', async () => {
+            await accountService.getAllUserAccounts(USER_ID);
             expect(userRepositoryMock.findUserById).toHaveBeenCalledWith(USER_ID);
         });
 
-        it('should throw an error if the requested user cannot be found', () => {
+        it('should throw an error if the requested user cannot be found', async () => {
             userRepositoryMock.findUserById = jest.fn(() => {
                 return null;
             })
             
-            expect(() => {
-                accountService.getAllUserAccounts(USER_ID);
-            }).toThrowError('User not found');
+            await expect(accountService.getAllUserAccounts(USER_ID))
+                .rejects.toEqual(Error('User not found'));
         });
 
-        it('should call the accountRepository to find the user\'s accounts', () => {
+        it('should call the accountRepository to find the user\'s accounts', async () => {
             const user = new User();
             user.userId = USER_ID;
             user.login = USER_LOGIN;
             user.email = USER_EMAIL;
             user.name = USER_NAME;
 
-            accountService.getAllUserAccounts(USER_ID);
+            await accountService.getAllUserAccounts(USER_ID);
             expect(accountRepositoryMock.findUserAccounts).toHaveBeenCalledWith(user);
         })
 
-        it('should return the requested user\'s accounts', () => {
+        it('should return the requested user\'s accounts', async () => {
             const accounts = [
                 createAccount({ accountId: 'ACCOUNT_01', accountName: 'ACCOUNT_01', users: null }),
                 createAccount({ accountId: 'ACCOUNT_02', accountName: 'ACCOUNT_02', users: null }),
@@ -104,64 +102,59 @@ describe('AccountService', () => {
                 return accounts;
             });
 
-            expect(accountService.getAllUserAccounts(USER_ID)).toBe(accounts);
+            await expect(accountService.getAllUserAccounts(USER_ID)).resolves.toBe(accounts);
         })
     });
 
     describe('get account details', () => {
-        it('should throw an error when providing no user', () => {
-            expect(() => {
-                accountService.getAccount(ACCOUNT_ID, '');
-            }).toThrowError('Invalid user id');
+        it('should throw an error when providing no user', async () => {
+            await expect(accountService.getAccount(ACCOUNT_ID, ''))
+                .rejects.toEqual(Error('Invalid user id'));
         });
 
-        it('should throw an error when providing no account', () => {
-            expect(() => {
-                accountService.getAccount('', USER_ID);
-            }).toThrowError('Invalid account id');
+        it('should throw an error when providing no account', async () => {
+            await expect(accountService.getAccount('', USER_ID))
+                .rejects.toEqual(Error('Invalid account id'));
         });
 
-        it('should call the user repository to find the requested user', () => {
-            accountService.getAccount(ACCOUNT_ID, USER_ID);
+        it('should call the user repository to find the requested user', async () => {
+            await accountService.getAccount(ACCOUNT_ID, USER_ID);
             expect(userRepositoryMock.findUserById).toHaveBeenCalledWith(USER_ID);
         });
 
-        it('should throw an error if the requested user cannot be found', () => {
+        it('should throw an error if the requested user cannot be found', async () => {
             userRepositoryMock.findUserById = jest.fn(() => {
                 return null;
             })
             
-            expect(() => {
-                accountService.getAccount(ACCOUNT_ID, USER_ID);
-            }).toThrowError('User not found');
+            await expect(accountService.getAccount(ACCOUNT_ID, USER_ID))
+                .rejects.toEqual(Error('User not found'));
         });
 
-        it('should call the account repository to find the requested account', () => {
-            accountService.getAccount(ACCOUNT_ID, USER_ID);
+        it('should call the account repository to find the requested account', async () => {
+            await accountService.getAccount(ACCOUNT_ID, USER_ID);
             expect(accountRepositoryMock.findAccountById).toHaveBeenCalledWith(ACCOUNT_ID);
         });
 
-        it('should throw an error if the account cannot be found', () => {
+        it('should throw an error if the account cannot be found', async () => {
             accountRepositoryMock.findAccountById = jest.fn(() => {
                 return null;
             })
             
-            expect(() => {
-                accountService.getAccount(ACCOUNT_ID, USER_ID);
-            }).toThrowError('Account not found');
+            await expect(accountService.getAccount(ACCOUNT_ID, USER_ID))
+                .rejects.toEqual(Error('Account not found'));
         });
 
-        it('should throw an error if the account is invalid', () => {
+        it('should throw an error if the account is invalid', async () => {
             accountRepositoryMock.findAccountById = jest.fn(() => {
                 return new Account();
             })
             
-            expect(() => {
-                accountService.getAccount(ACCOUNT_ID, USER_ID);
-            }).toThrowError('Invalid account');
+            await expect(accountService.getAccount(ACCOUNT_ID, USER_ID))
+                .rejects.toEqual(Error('Invalid account'));
         });
 
-        it('should throw an error when attempting to get an unauthorized account', () => {
+        it('should throw an error when attempting to get an unauthorized account', async () => {
             accountRepositoryMock.findAccountById = jest.fn((accountId) => {
                 return createAccount({
                     accountId,
@@ -170,12 +163,11 @@ describe('AccountService', () => {
                 });
             })
             
-            expect(() => {
-                accountService.getAccount(ACCOUNT_ID, USER_ID);
-            }).toThrowError('Unauthorized operation');
+            await expect(accountService.getAccount(ACCOUNT_ID, USER_ID))
+                .rejects.toEqual(Error('Unauthorized operation'));
         })
 
-        it('should return the requested account', () => {
+        it('should return the requested account', async () => {
             const user = new User();
             user.userId = USER_ID;
             let requestedAccount = createAccount({
@@ -187,7 +179,7 @@ describe('AccountService', () => {
                 return requestedAccount;
             })
             
-            const account = accountService.getAccount(ACCOUNT_ID, USER_ID);
+            const account = await accountService.getAccount(ACCOUNT_ID, USER_ID);
             
             expect(account).toBe(requestedAccount);
         });
@@ -221,68 +213,63 @@ describe('AccountService', () => {
             })
         });
 
-        it('should throw an error when providing no user id', () => {
-            expect(() => {
-                accountService.createAccount(newAccount, '');
-            }).toThrowError('Invalid user id');
+        it('should throw an error when providing no user id', async () => {
+            await expect(accountService.createAccount(newAccount, ''))
+                .rejects.toEqual(Error('Invalid user id'));
         });
 
-        it('should call the user repository to find the requested user', () => {
-            accountService.createAccount(newAccount, USER_ID);
+        it('should call the user repository to find the requested user', async () => {
+            await accountService.createAccount(newAccount, USER_ID);
             expect(userRepositoryMock.findUserById).toHaveBeenCalledWith(USER_ID);
         });
 
-        it('should throw an error if the requested user cannot be found', () => {
+        it('should throw an error if the requested user cannot be found', async () => {
             userRepositoryMock.findUserById = jest.fn(() => {
                 return null;
             })
-            
-            expect(() => {
-                accountService.createAccount(newAccount, USER_ID);
-            }).toThrowError('User not found');
+
+            await expect(accountService.createAccount(newAccount, USER_ID))
+                .rejects.toEqual(Error('User not found'));
         });
 
-        it('should throw an error when providing an invalid account', () => {
+        it('should throw an error when providing an invalid account', async () => {
             newAccount.name = '';
-            expect(() => {
-                accountService.createAccount(newAccount, USER_ID);
-            }).toThrowError('Invalid account');
+            await expect(accountService.createAccount(newAccount, USER_ID))
+                .rejects.toEqual(Error('Invalid account'));
         });
 
-        it('should call the accountRepository to create the account', () => {
-            accountService.createAccount(newAccount, USER_ID);
+        it('should call the accountRepository to create the account', async () => {
+            await accountService.createAccount(newAccount, USER_ID);
 
             expect(accountRepositoryMock.createAccount).toHaveBeenCalled();
         });
 
-        it('should add the current user as the account creator and user', () => {
-            accountService.createAccount(newAccount, USER_ID);
+        it('should add the current user as the account creator and user', async () => {
+            await accountService.createAccount(newAccount, USER_ID);
             
             expect(accountRepositoryMock.createAccount).toHaveBeenCalledWith(formattedNewAccount);
         });
 
-        it('should throw an error if the creation fails', () => {
+        it('should throw an error if the creation fails', async () => {
             accountRepositoryMock.createAccount = jest.fn((account: Account): Account => {
                 throw new Error('Account creation failed');
             })
-
-            expect(() => {
-                accountService.createAccount(newAccount, USER_ID);
-            }).toThrowError('Account creation failed');
+            
+            await expect(accountService.createAccount(newAccount, USER_ID))
+                .rejects.toEqual(Error('Account creation failed'));
         })
 
-        it('should throw an error if the creation returns an invalid account', () => {
+        it('should throw an error if the creation returns an invalid account', async () => {
             accountRepositoryMock.createAccount = jest.fn((account: Account): Account => {
                 return new Account();
             })
 
-            expect(() => {
-                accountService.createAccount(newAccount, USER_ID);
-            }).toThrowError('Invalid created account');
+            await expect(accountService.createAccount(newAccount, USER_ID))
+                .rejects.toEqual(Error('Invalid created account'));
         })
 
-        it('should return the created account if the creation succeeds', () => {
-            expect(accountService.createAccount(newAccount, USER_ID)).toBe(formattedNewAccount);
+        it('should return the created account if the creation succeeds', async () => {
+            expect(accountService.createAccount(newAccount, USER_ID)).resolves.toBe(formattedNewAccount);
         });
     });
 
@@ -314,28 +301,26 @@ describe('AccountService', () => {
             });
         });
 
-        it('should throw an error when providing no user id', () => {
-            expect(() => {
-                accountService.modifyAccount(modifiedAccount, '');
-            }).toThrowError('Invalid user id');
+        it('should throw an error when providing no user id', async () => {
+            await expect(accountService.modifyAccount(modifiedAccount, ''))
+                .rejects.toEqual(Error('Invalid user id'));
         });
 
-        it('should call the user repository to find the requested user', () => {
-            accountService.modifyAccount(modifiedAccount, USER_ID);
+        it('should call the user repository to find the requested user', async() => {
+            await accountService.modifyAccount(modifiedAccount, USER_ID);
             expect(userRepositoryMock.findUserById).toHaveBeenCalledWith(USER_ID);
         });
 
-        it('should throw an error if the requested user cannot be found', () => {
+        it('should throw an error if the requested user cannot be found', async () => {
             userRepositoryMock.findUserById = jest.fn(() => {
                 return null;
             })
             
-            expect(() => {
-                accountService.modifyAccount(modifiedAccount, USER_ID);
-            }).toThrowError('User not found');
+            await expect(accountService.modifyAccount(modifiedAccount, USER_ID))
+                .rejects.toEqual(Error('User not found'));
         });
 
-        it('should throw an error if the requested user isn\'t the account creator', () => {
+        it('should throw an error if the requested user isn\'t the account creator', async () => {
             userRepositoryMock.findUserById = jest.fn(() => {
                 const foundUser = new User();
                 foundUser.userId = 'ANOTHER_USER';
@@ -345,68 +330,61 @@ describe('AccountService', () => {
                 return foundUser;
             })
             
-            expect(() => {
-                accountService.modifyAccount(modifiedAccount, USER_ID);
-            }).toThrowError('Unauthorized operation');
+            await expect(accountService.modifyAccount(modifiedAccount, USER_ID))
+                .rejects.toEqual(Error('Unauthorized operation'));
         });
 
-        it('should throw an error when providing no account', () => {
-            expect(() => {
-                accountService.modifyAccount(null, USER_ID);
-            }).toThrowError('Invalid account');
+        it('should throw an error when providing no account', async () => {
+            await expect(accountService.modifyAccount(null, USER_ID))
+                .rejects.toEqual(Error('Invalid account'));
         });
 
-        it('should throw an error when providing an account with no id', () => {
+        it('should throw an error when providing an account with no id', async () => {
             modifiedAccount.accountId = null;
-            expect(() => {
-                accountService.modifyAccount(modifiedAccount, USER_ID);
-            }).toThrowError('Invalid account');
+            await expect(accountService.modifyAccount(modifiedAccount, USER_ID))
+                .rejects.toEqual(Error('Invalid account'));
         });
 
-        it('should throw an error when modifying an invalid account', () => {
+        it('should throw an error when modifying an invalid account', async () => {
             modifiedAccount.name = null;
-            expect(() => {
-                accountService.modifyAccount(modifiedAccount, USER_ID);
-            }).toThrowError('Invalid account');
+            await expect(accountService.modifyAccount(modifiedAccount, USER_ID))
+                .rejects.toEqual(Error('Invalid account'));
         });
 
-        it('should call the accountRepository to update the account', () => {
-            accountService.modifyAccount(modifiedAccount, USER_ID);
+        it('should call the accountRepository to update the account', async () => {
+            await accountService.modifyAccount(modifiedAccount, USER_ID);
             expect(accountRepositoryMock.updateAccount).toHaveBeenCalledWith(modifiedAccount);
         });
 
-        it('should throw an error if the update fails', () => {
+        it('should throw an error if the update fails', async () => {
             accountRepositoryMock.updateAccount = jest.fn((updatedAccount: Account): Account => {
                 throw new Error('Account update failed');
             });
 
-            expect(() => {
-                accountService.modifyAccount(modifiedAccount, USER_ID);
-            }).toThrowError('Account update failed');
+            await expect(accountService.modifyAccount(modifiedAccount, USER_ID))
+                .rejects.toEqual(Error('Account update failed'));
         });
 
-        it('should throw an error if the updated account is invalid', () => {
+        it('should throw an error if the updated account is invalid', async () => {
             accountRepositoryMock.updateAccount = jest.fn((updatedAccount: Account): Account => {
                 return new Account();
             });
 
-            expect(() => {
-                accountService.modifyAccount(modifiedAccount, USER_ID);
-            }).toThrowError('Invalid updated account');
+            await expect(accountService.modifyAccount(modifiedAccount, USER_ID))
+                .rejects.toEqual(Error('Invalid updated account'));
         });
 
-        it('should throw an error if there is no update account', () => {
+        it('should throw an error if there is no update account', async () => {
             accountRepositoryMock.updateAccount = jest.fn((updatedAccount: Account): Account => {
                 return null;
             });
 
-            expect(() => {
-                accountService.modifyAccount(modifiedAccount, USER_ID);
-            }).toThrowError('Invalid updated account');
+            await expect(accountService.modifyAccount(modifiedAccount, USER_ID))
+                .rejects.toEqual(Error('Invalid updated account'));
         });
 
-        it('should return the modified account if the update succeeds', () => {
-            expect(accountService.modifyAccount(modifiedAccount, USER_ID)).toBe(modifiedAccount);
+        it('should return the modified account if the update succeeds', async () => {
+            expect(accountService.modifyAccount(modifiedAccount, USER_ID)).resolves.toBe(modifiedAccount);
         });
     });
 
@@ -417,17 +395,17 @@ describe('AccountService', () => {
             });
         });
 
-        it('should get the account informations', () => {
+        it('should get the account informations', async () => {
             accountService.getAccount = jest.fn();
             
-            accountService.removeAccount(ACCOUNT_ID, USER_ID);
+            await accountService.removeAccount(ACCOUNT_ID, USER_ID);
 
             expect(accountService.getAccount).toHaveBeenCalledWith(ACCOUNT_ID, USER_ID);
         })
 
         // No need to test getAccount again
 
-        it('should throw an error if the user is not the account creator', () => {
+        it('should throw an error if the user is not the account creator', async () => {
             accountRepositoryMock.findAccountById = jest.fn((accountId: string, userId: string): Account => {
                 const randomUser = new User();
                 randomUser.userId = "RANDOM_USER";
@@ -444,30 +422,28 @@ describe('AccountService', () => {
                 return foundAccount;
             });
 
-            expect(() => {
-                accountService.removeAccount(ACCOUNT_ID, USER_ID);
-            }).toThrowError('Unauthorized operation');
+            await expect(accountService.removeAccount(ACCOUNT_ID, USER_ID))
+                .rejects.toEqual(Error('Unauthorized operation'));
         });
         
-        it('should call the account repository to remove the requested account', () => {
-            accountService.removeAccount(ACCOUNT_ID, USER_ID);
+        it('should call the account repository to remove the requested account', async () => {
+            await accountService.removeAccount(ACCOUNT_ID, USER_ID);
             expect(accountRepositoryMock.deleteAccount).toHaveBeenCalledWith(ACCOUNT_ID);
         });
 
-        it('should throw an error if the removal fails', () => {
+        it('should throw an error if the removal fails', async () => {
             const REMOVAL_FAILS_ERROR = 'REMOVAL_FAILS_ERROR';
             
             accountRepositoryMock.deleteAccount = jest.fn((accountId: string): boolean => {
                 throw new Error(REMOVAL_FAILS_ERROR);
             });
 
-            expect(() => {
-                accountService.removeAccount(ACCOUNT_ID, USER_ID);
-            }).toThrowError(REMOVAL_FAILS_ERROR);
+            await expect(accountService.removeAccount(ACCOUNT_ID, USER_ID))
+                .rejects.toEqual(Error(REMOVAL_FAILS_ERROR));
         });
 
-        it('should return true if the removal succeeds', () => {
-            expect(accountService.removeAccount(ACCOUNT_ID, USER_ID)).toBe(true);
+        it('should return true if the removal succeeds', async () => {
+            expect(accountService.removeAccount(ACCOUNT_ID, USER_ID)).resolves.toBe(true);
         });
     });
 });

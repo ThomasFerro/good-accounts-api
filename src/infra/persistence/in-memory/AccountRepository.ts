@@ -10,7 +10,7 @@ export class InMemoryAccountRepository implements IAccountRepository {
         this.accounts = [];
     }
 
-    findUserAccounts(user: User): Account[] {
+    async findUserAccounts(user: User): Promise<Account[]> {
         return this.accounts.filter((account: Account) => {
             return user &&
                 account &&
@@ -21,7 +21,7 @@ export class InMemoryAccountRepository implements IAccountRepository {
         });
     }
 
-    findAccountById(accountId: string): Account {
+    async findAccountById(accountId: string): Promise<Account> {
         if (!accountId) {
             return null;
         }
@@ -30,7 +30,7 @@ export class InMemoryAccountRepository implements IAccountRepository {
         });
     }
 
-    createAccount(account: Account): Account {
+    async createAccount(account: Account): Promise<Account> {
         const createAccount: Account = new Account({
             name: account.name,
             transactions: account.transactions,
@@ -42,7 +42,7 @@ export class InMemoryAccountRepository implements IAccountRepository {
         return createAccount;
     }
 
-    updateAccount(updatedAccount: Account): Account {
+    async updateAccount(updatedAccount: Account): Promise<Account> {
         if (!updatedAccount || !updatedAccount.accountId) {
             throw new Error('Invalid account');
         }
@@ -60,7 +60,7 @@ export class InMemoryAccountRepository implements IAccountRepository {
         return updatedAccount;
     }
 
-    deleteAccount(accountId: string): boolean {
+    async deleteAccount(accountId: string): Promise<boolean> {
         let success: boolean = false;
 
         const accountIndex = this.accounts.findIndex((account: Account): boolean => {

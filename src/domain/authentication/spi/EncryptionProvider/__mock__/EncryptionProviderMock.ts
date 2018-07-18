@@ -20,8 +20,7 @@ export class EncryptionProviderMock implements IEncryptionProvider {
         return null;
     });
 
-    // TODO: Return Promise<string>
-    hashPassword = jest.fn((password: string): string => {
+    hashPassword = jest.fn((password: string): Promise<string> => {
         return null;
     });
 }

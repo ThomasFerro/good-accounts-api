@@ -15,7 +15,7 @@ export class UserService implements IUserService {
         this.userRepository = userRepository;
     };
 
-    searchUser(query: string): Array<User> {
+    async searchUser(query: string): Promise<Array<User>> {
         if (!query) {
             throw new Error('Invalid query');
         }
@@ -23,22 +23,22 @@ export class UserService implements IUserService {
         return this.userRepository.searchUsers(query);
     };
 
-    createUser(user: User): User {
+    async createUser(user: User): Promise<User> {
         if (!user || !user.isValid()) {
             throw new Error('Invalid user');
         }
 
-        if (this.userRepository.findUserByLogin(user.login)) {
+        if (await this.userRepository.findUserByLogin(user.login)) {
             throw new Error('User already exists');
         }
 
-        user.password = this.encryptionProvider.hashPassword(user.password);
+        user.password = await this.encryptionProvider.hashPassword(user.password);
 
-        const createdUser: User = this.userRepository.createUser(user);
+        const createdUser: User = await this.userRepository.createUser(user);
         return createdUser && createdUser.userInfo();
     };
 
-    removeUser(userId: string): boolean {
+    async removeUser(userId: string): Promise<boolean> {
         if (!userId) {
             throw new Error('Invalid user id');
         }

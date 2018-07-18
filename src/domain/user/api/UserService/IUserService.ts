@@ -1,9 +1,9 @@
 import { User } from '../../core/entities/User/User';
 
 export interface IUserService {
-    searchUser(query: string) : Array<User>;
+    searchUser(query: string) : Promise<Array<User>>;
 
-    createUser(user: User) : User;
+    createUser(user: User) : Promise<User>;
 
-    removeUser(userId: string): boolean;
+    removeUser(userId: string): Promise<boolean>;
 };

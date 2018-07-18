@@ -9,6 +9,5 @@ export interface IEncryptionProvider {
 
     comparePassword(passwordToCompare: string, user: User): Promise<string>;
 
-    // TODO: Return Promise<string>
-    hashPassword(password: string): string;
+    hashPassword(password: string): Promise<string>;
 };

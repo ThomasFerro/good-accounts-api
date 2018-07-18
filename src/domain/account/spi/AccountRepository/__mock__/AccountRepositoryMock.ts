@@ -5,23 +5,23 @@ import { Account } from '../../../core/entities/Account/Account';
 import { User } from '../../../../user/core/entities/User/User';
 
 export class AccountRepositoryMock implements IAccountRepository {
-    findUserAccounts = jest.fn((user: User): Array<Account> => {
-        return [];
-    });
-
-    findAccountById = jest.fn((accountId: string): Account => {
+    findUserAccounts = jest.fn((user: User): Promise<Array<Account>> => {
         return null;
     });
 
-    createAccount = jest.fn((account: Account): Account => {
+    findAccountById = jest.fn((accountId: string): Promise<Account> => {
         return null;
     });
 
-    updateAccount = jest.fn((account: Account): Account => {
+    createAccount = jest.fn((account: Account): Promise<Account> => {
         return null;
     });
 
-    deleteAccount = jest.fn((accountId: string, userId: string): boolean => {
+    updateAccount = jest.fn((account: Account): Promise<Account> => {
+        return null;
+    });
+
+    deleteAccount = jest.fn((accountId: string, userId: string): Promise<boolean> => {
         return null;
     });
 };
