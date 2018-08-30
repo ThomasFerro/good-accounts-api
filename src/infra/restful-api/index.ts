@@ -6,7 +6,7 @@ import { Routes } from './controllers';
 import { authorizationMiddleware, errorMiddleware } from './middlewares';
 
 const app: express.Application = express();
-const port: number = Number(process.env.PORT) || 3000;
+const port: number = Number(process.env.PORT) || 80;
 
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -22,5 +22,5 @@ app.use('/api/v1', Routes);
 app.use(errorMiddleware);
 
 app.listen(port, () => {
-    console.log('Example app listening on port 3000!')
+    console.log(`Example app listening on port ${port}!`);
 });
