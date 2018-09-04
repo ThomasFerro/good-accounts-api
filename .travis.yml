@@ -4,8 +4,10 @@ node_js:
 before_deploy:
 - openssl aes-256-cbc -K $encrypted_03b0bb3237ea_key -iv $encrypted_03b0bb3237ea_iv
   -in client-secret.json.enc -out client-secret.json -d
+- npm run build
 deploy:
   provider: gae
+  skip_cleanup: true
   keyfile: client-secret.json
   project: good-accounts
   on: master

@@ -7,13 +7,13 @@
     "setup": "npm install",
     "build": "tsc",
     "build-watch": "tsc --watch",
-    "start": "node ./dist/infra/restful-api/index.js",
-    "dev": "nodemon ./dist/infra/restful-api/index.js",
+    "start": "node ./infra/restful-api/index.js",
+    "dev": "nodemon ./infra/restful-api/index.js",
     "test-only": "jest --coverage",
     "pretest": "npm run build",
     "test": "npm run test-only",
     "watched-test": "jest --watch",
-    "clean": "shx rm -rf node_modules/ dist/"
+    "clean": "shx rm -rf node_modules/ infra/ domain/"
   },
   "author": "Thomas Ferro",
   "license": "MIT",
