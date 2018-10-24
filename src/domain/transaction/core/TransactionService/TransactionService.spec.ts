@@ -225,17 +225,8 @@ describe('TransactionService', () => {
 
             expect(transactionRepositoryMock.deleteTransaction).toHaveBeenCalledWith(ACCOUNT, TRANSACTION_ID);
         });
-
-        it('should throw an error if the transaction removal fails', async () => {
-            const TRANSACTION_REMOVAL_ERROR = 'TRANSACTION_REMOVAL_ERROR';
-
-            transactionRepositoryMock.deleteTransaction = jest.fn((account: Account, transactionId: string): boolean =>  {
-                throw new Error(TRANSACTION_REMOVAL_ERROR);
-            });
-
-            await expect(transactionService.removeTransactionFromAccount(ACCOUNT_ID, TRANSACTION_ID, USER_ID))
-                .rejects.toEqual(Error(TRANSACTION_REMOVAL_ERROR));
-        });
+        
+        // TODO : Test !
 
         it('should return true if the transaction removal succeeds', async () => {
             expect(transactionService.removeTransactionFromAccount(ACCOUNT_ID, TRANSACTION_ID, USER_ID)).resolves.toBe(true);
