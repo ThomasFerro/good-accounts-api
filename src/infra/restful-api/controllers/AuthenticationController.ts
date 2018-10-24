@@ -16,7 +16,7 @@ router.post('/', async (req: GoodAccountsRequest, res: Response, next: NextFunct
     } catch (e) {
         next(new GoodAccountsError({
             error: 'Authentication failed',
-            message: e
+            message: e && e.message
         }));
     }
 });

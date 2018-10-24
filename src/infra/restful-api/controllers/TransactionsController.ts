@@ -12,7 +12,22 @@ router.post('/', async (req: GoodAccountsRequest, res: Response, next: NextFunct
     } catch (e) {
         next(new GoodAccountsError({
             error: 'Transaction creation error',
-            message: e
+            message: e && e.message
+        }));
+    }
+});
+
+router.delete('/:transactionId', async (req: GoodAccountsRequest, res: Response, next: NextFunction) => {
+    try {
+        res.send(
+            await transactionService.removeTransactionFromAccount(
+                req.params.accountId, req.params.transactionId, req.user && req.user.userId
+            )
+        );
+    } catch (e) {
+        next(new GoodAccountsError({
+            error: 'Transaction suppression error',
+            message: e && e.message
         }));
     }
 });

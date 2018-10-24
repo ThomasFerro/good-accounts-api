@@ -12,7 +12,7 @@ router.get('/', async (req: GoodAccountsRequest, res: Response, next: NextFuncti
     } catch (e) {
         next(new GoodAccountsError({
             error: 'User accounts fetching error',
-            message: e
+            message: e && e.message
         }));
     }
 });
@@ -23,7 +23,7 @@ router.post('/', async (req: GoodAccountsRequest, res: Response, next: NextFunct
     } catch (e) {
         next(new GoodAccountsError({
             error: 'Accounts creation error',
-            message: e
+            message: e && e.message
         }));
     }
 });
@@ -34,7 +34,7 @@ router.get('/:accountId', async (req: GoodAccountsRequest, res: Response, next: 
     } catch (e) {
         next(new GoodAccountsError({
             error: 'Account fetching error',
-            message: e
+            message: e && e.message
         }));
     }
 });
@@ -45,7 +45,7 @@ router.put('/:accountId', async (req: GoodAccountsRequest, res: Response, next: 
     } catch (e) {
         next(new GoodAccountsError({
             error: 'Account modification error',
-            message: e
+            message: e && e.message
         }));
     }
 });
@@ -56,7 +56,7 @@ router.delete('/:accountId', async (req: GoodAccountsRequest, res: Response, nex
     } catch (e) {
         next(new GoodAccountsError({
             error: 'Account suppression error',
-            message: e
+            message: e && e.message
         }));
     }
 });
